@@ -170,7 +170,7 @@ export default function DailyMenuSection({
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
                 <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
                   <ChefHat className="w-3.5 h-3.5 text-amber-300" />
-                  {menu.station || 'ซุ้มอาหารหลัก'}
+                  {(!menu.station || menu.station.includes('')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
                 </span>
                 <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
                   ★ {Number(menu.rating_avg || 4.8).toFixed(1)} ({menu.reviews_count || 0})
