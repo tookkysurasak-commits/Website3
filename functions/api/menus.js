@@ -1,9 +1,9 @@
-const INITIAL_MENUS = [
+﻿const INITIAL_MENUS = [
   {
     id: 'm-01',
-    name: '���ǡ������١�ͺ��������',
+    name: 'ข้าวกะเพราหมูกรอบไข่ดาวลาวา',
     category: 'main',
-    description: '��١�ͺ�Ѵ����� �Ѵ����Ҿ�ԡ���������蹡�з� ����쿾����������������',
+    description: 'หมูกรอบคัดพิเศษ ผัดกะเพราพริกแห้งหอมกลิ่นกระทะ เสิร์ฟพร้อมไข่ดาวเป็ดเยิ้มๆ',
     calories: 680,
     allergens: ['Gluten', 'Egg', 'Pork'],
     image_url: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80',
@@ -11,13 +11,13 @@ const INITIAL_MENUS = [
     is_special: true,
     rating_avg: 4.8,
     reviews_count: 38,
-    station: '���������觨ҹ��ǹ (િ�����)'
+    station: 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)'
   },
   {
     id: 'm-02',
-    name: '����ӡ�駹�Ӣ��ʹ�о������͹',
+    name: 'ต้มยำกุ้งน้ำข้นยอดมะพร้าวอ่อน',
     category: 'soup_curry',
-    description: '���᪺��µ��� �ػ������������ͧ��ع�� ��� ����� ��С�ٴ ��й���ʴ��',
+    description: 'กุ้งแชบ๊วยตัวโต ซุปต้มยำหอมเครื่องสมุนไพร ข่า ตะไคร้ ใบมะกรูด และนมข้นสดแท้',
     calories: 340,
     allergens: ['Seafood', 'Dairy'],
     image_url: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4853?auto=format&fit=crop&w=800&q=80',
@@ -25,13 +25,13 @@ const INITIAL_MENUS = [
     is_special: true,
     rating_avg: 4.6,
     reviews_count: 29,
-    station: '�������ᡧ���� (������)'
+    station: 'ซุ้มต้มแกงไทยแท้ (ป้าสมร)'
   },
   {
     id: 'm-03',
-    name: '��Ѵ͡�������ҧ��ԡ�´� & ���Ǥ��',
+    name: 'สลัดอกไก่นุ่มย่างพริกไทยดำ & อะโวคาโด',
     category: 'healthy_veg',
-    description: '͡����ѡ��ع����ҧ�Ҷ�ҹ �ѡ����⻹ԡ��ʴ��ͺ 5 ��Դ �����Ѵ�ҭ����������',
+    description: 'อกไก่หมักสมุนไพรย่างเตาถ่าน ผักไฮโดรโปนิกส์สดกรอบ 5 ชนิด น้ำสลัดงาญี่ปุ่นโฮมเมด',
     calories: 310,
     allergens: ['Gluten'],
     image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
@@ -39,13 +39,13 @@ const INITIAL_MENUS = [
     is_special: false,
     rating_avg: 4.5,
     reviews_count: 22,
-    station: '���� Healthy & Clean Corner'
+    station: 'ซุ้ม Healthy & Clean Corner'
   },
   {
     id: 'm-04',
-    name: 'ᡧ������ҹ���ʹ�о���� + ����չ',
+    name: 'แกงเขียวหวานไก่ยอดมะพร้าว + ขนมจีน',
     category: 'soup_curry',
-    description: 'ᡧ������ҹ�зԤ��ʴ ����鹡������� ����� �ʹ�о���ǡ�غ��ͺ',
+    description: 'แกงเขียวหวานกะทิคั้นสด เข้มข้นกลมกล่อม ไก่นุ่ม ยอดมะพร้าวกรุบกรอบ',
     calories: 520,
     allergens: ['None'],
     image_url: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=800&q=80',
@@ -53,13 +53,13 @@ const INITIAL_MENUS = [
     is_special: false,
     rating_avg: 4.3,
     reviews_count: 19,
-    station: '�������ᡧ���� (������)'
+    station: 'ซุ้มต้มแกงไทยแท้ (ป้าสมร)'
   },
   {
     id: 'm-05',
-    name: '�����˹�������ǧ��Ӵ͡����ٹ�з�ʴ',
+    name: 'ข้าวเหนียวมะม่วงน้ำดอกไม้มูนกะทิสด',
     category: 'dessert',
-    description: '����ǧ��Ӵ͡����ء��ҹ��� �����˹����ٹ������ �Ҵ�з�ͺ��ѹ��¹��ж��Ƿͧ',
+    description: 'มะม่วงน้ำดอกไม้สุกหวานฉ่ำ ข้าวเหนียวมูนเม็ดสวย ราดกะทิอบควันเทียนและถั่วทอง',
     calories: 420,
     allergens: ['None'],
     image_url: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80',
@@ -67,13 +67,13 @@ const INITIAL_MENUS = [
     is_special: true,
     rating_avg: 4.9,
     reviews_count: 45,
-    station: '���������ҹ & ������'
+    station: 'ซุ้มขนมหวาน & เบเกอรี่'
   },
   {
     id: 'm-06',
-    name: '���ᵧ������������ & �����������Ĵ١��',
+    name: 'น้ำแตงโมปั่นเกล็ดหิมะ & ผลไม้รวมตามฤดูกาล',
     category: 'drink_fruit',
-    description: 'ᵧ��ʴ��ҹ�����ҵ� 100% �������������� �������ᵧ�� ᤹���ٻ ��н���ʴ',
+    description: 'แตงโมสดหวานธรรมชาติ 100% ไม่เติมน้ำเชื่อม พร้อมเซ็ตแตงโม แคนตาลูป และฝรั่งสด',
     calories: 120,
     allergens: ['None'],
     image_url: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=800&q=80',
@@ -81,9 +81,23 @@ const INITIAL_MENUS = [
     is_special: false,
     rating_avg: 4.7,
     reviews_count: 31,
-    station: '��������ͧ������м����ʴ'
+    station: 'ซุ้มเครื่องดื่มและผลไม้สด'
   }
 ];
+
+function getStationByCategory(category, station) {
+  if (station && typeof station === 'string' && station.trim() && !station.includes('\uFFFD') && !station.includes('?') && !station.includes('w')) {
+    return station;
+  }
+  switch (category) {
+    case 'main': return 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)';
+    case 'soup_curry': return 'ซุ้มต้มแกงไทยแท้ (ป้าสมร)';
+    case 'healthy_veg': return 'ซุ้ม Healthy & Clean Corner';
+    case 'dessert': return 'ซุ้มขนมหวาน & เบเกอรี่';
+    case 'drink_fruit': return 'ซุ้มเครื่องดื่มและผลไม้สด';
+    default: return 'ซุ้มอาหารหลัก (เชฟประจำวัน)';
+  }
+}
 
 async function executeD1Query(env, sql, params = []) {
   if (env.DB && typeof env.DB.prepare === 'function') {
@@ -128,7 +142,7 @@ export async function onRequestGet(context) {
         is_special: Boolean(m.is_special),
         rating_avg: Number(m.rating_avg || 4.8),
         reviews_count: Number(m.reviews_count || 0),
-        station: m.station || '�����������ѡ'
+        station: getStationByCategory(m.category, m.station)
       }));
       return Response.json({ success: true, data: formatted, source: 'cloudflare-d1' });
     }

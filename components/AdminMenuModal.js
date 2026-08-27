@@ -35,10 +35,10 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
 
   useEffect(() => {
     if (menuToEdit) {
-      setName(menuToEdit.name || '');
-      setCategory(menuToEdit.category || 'main');
-      setStation(menuToEdit.station || 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)');
-      setDescription(menuToEdit.description || '');
+      const safeStation = (menuToEdit.station && !menuToEdit.station.includes('?') && !menuToEdit.station.includes('w'))
+        ? menuToEdit.station 
+        : 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)';
+      setStation(safeStation);
       setCalories(menuToEdit.calories || 450);
       setAllergens(Array.isArray(menuToEdit.allergens) ? menuToEdit.allergens : []);
       setImageUrl(menuToEdit.image_url || PRESET_FOOD_IMAGES[0].url);

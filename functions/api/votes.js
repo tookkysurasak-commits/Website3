@@ -1,20 +1,20 @@
-const INITIAL_VOTES = [
+Ôªøconst INITIAL_VOTES = [
   {
     id: 'vote-01',
-    dish_name: '¢È“«¢“À¡Ÿ‡¬Õ√¡—π∑Õ¥°√Õ∫ + πÈ”®‘È¡´’øŸÈ¥',
+    dish_name: '‡∏Ç‡πâ‡∏≤‡∏ß‡∏Ç‡∏≤‡∏´‡∏°‡∏π‡πÄ‡∏¢‡∏≠‡∏£‡∏°‡∏±‡∏ô‡∏ó‡∏≠‡∏î‡∏Å‡∏£‡∏≠‡∏ö + ‡∏ô‡πâ‡∏≥‡∏à‡∏¥‡πâ‡∏°‡∏ã‡∏µ‡∏ü‡∏π‡πâ‡∏î',
     category: 'main',
     votes_count: 64,
-    proposed_by: '∑’¡ Business Development',
-    tags: ['¬Õ¥Œ‘µ', '?? ¡“·√ß'],
+    proposed_by: '‡∏ó‡∏µ‡∏° Business Development',
+    tags: ['‡∏¢‡∏≠‡∏î‡∏Æ‡∏¥‡∏ï', 'üî• ‡∏°‡∏≤‡πÅ‡∏£‡∏á'],
     status: 'active'
   },
   {
     id: 'vote-02',
-    dish_name: '°Î«¬‡µ’Î¬«‡√◊Õ‡π◊ÈÕ«“°‘« / À¡Ÿ§ÿ‚√∫Ÿµ–πÈ”µ°‡¢È¡¢Èπ',
+    dish_name: '‡∏Å‡πã‡∏ß‡∏¢‡πÄ‡∏ï‡∏µ‡πã‡∏¢‡∏ß‡πÄ‡∏£‡∏∑‡∏≠‡πÄ‡∏ô‡∏∑‡πâ‡∏≠‡∏ß‡∏≤‡∏Å‡∏¥‡∏ß / ‡∏´‡∏°‡∏π‡∏Ñ‡∏∏‡πÇ‡∏£‡∏ö‡∏π‡∏ï‡∏∞‡∏ô‡πâ‡∏≥‡∏ï‡∏Å‡πÄ‡∏Ç‡πâ‡∏°‡∏Ç‡πâ‡∏ô',
     category: 'main',
     votes_count: 89,
-    proposed_by: 'ΩË“¬‰Õ∑’ & Tech',
-    tags: ['?? Õ—π¥—∫ 1', '?? ¡“·√ß'],
+    proposed_by: '‡∏ù‡πà‡∏≤‡∏¢‡πÑ‡∏≠‡∏ó‡∏µ & Tech',
+    tags: ['üåü ‡∏≠‡∏±‡∏ô‡∏î‡∏±‡∏ö 1', 'üî• ‡∏°‡∏≤‡πÅ‡∏£‡∏á'],
     status: 'active'
   }
 ];
@@ -83,7 +83,7 @@ export async function onRequestPost(context) {
       await executeD1Query(
         context.env,
         'INSERT INTO menu_votes (id, dish_name, category, votes_count, proposed_by, status) VALUES (?, ?, ?, 1, ?, ?)',
-        [newId, dish_name, category, proposed_by || 'æπ—°ß“π', 'active']
+        [newId, dish_name, category, proposed_by || '‡∏û‡∏ô‡∏±‡∏Å‡∏á‡∏≤‡∏ô', 'active']
       );
       return Response.json({ success: true, id: newId, message: 'Dish proposed' });
     }
