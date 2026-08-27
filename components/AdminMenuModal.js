@@ -1,22 +1,24 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Plus, Edit3, Trash2, Image, Sparkles, CheckCircle2, Flame, Utensils, AlertCircle, ChefHat, Calendar } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, Plus, Edit3, Trash2, Image, Sparkles, CheckCircle2, Flame, Utensils, AlertCircle, ChefHat, Calendar, Upload, RefreshCw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { MENU_CATEGORIES, ALLERGEN_OPTIONS } from '@/lib/initial-data';
 
-// Preset appetizing food images for 1-click selection
-const PRESET_FOOD_IMAGES = [
-  { name: 'ผัดกะเพราหมูกรอบ', url: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80' },
-  { name: 'ต้มยำกุ้งน้ำข้น', url: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4853?auto=format&fit=crop&w=800&q=80' },
-  { name: 'สลัดอกไก่คลีน', url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80' },
-  { name: 'แกงเขียวหวานไก่', url: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=800&q=80' },
-  { name: 'ข้าวเหนียวมะม่วง', url: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80' },
-  { name: 'น้ำแตงโม/ผลไม้สด', url: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=800&q=80' },
-  { name: 'ข้าวขาหมูเยอรมัน', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80' },
-  { name: 'ก๋วยเตี๋ยวเรือเนื้อ', url: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80' },
-  { name: 'ปลาแซลมอนย่าง', url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80' },
+// Default preset images
+const DEFAULT_PRESET_IMAGES = [
+  { id: 'img-1', name: 'ผัดกะเพราหมูกรอบ', url: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-2', name: 'ต้มยำกุ้งน้ำข้น', url: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4853?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-3', name: 'สลัดอกไก่คลีน', url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-4', name: 'แกงเขียวหวานไก่', url: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-5', name: 'ข้าวเหนียวมะม่วง', url: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-6', name: 'น้ำแตงโม/ผลไม้สด', url: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-7', name: 'ข้าวขาหมูเยอรมัน', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-8', name: 'ก๋วยเตี๋ยวเรือเนื้อ', url: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80' },
+  { id: 'img-9', name: 'ปลาแซลมอนย่าง', url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80' },
 ];
+
+const STORAGE_CUSTOM_IMAGES = 'canteen_custom_food_images_v2';
 
 export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu, onDeleteMenu }) {
   const [name, setName] = useState('');
@@ -25,23 +27,62 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
   const [description, setDescription] = useState('');
   const [calories, setCalories] = useState(450);
   const [allergens, setAllergens] = useState([]);
-  const [imageUrl, setImageUrl] = useState(PRESET_FOOD_IMAGES[0].url);
+  const [imageUrl, setImageUrl] = useState(DEFAULT_PRESET_IMAGES[0].url);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSpecial, setIsSpecial] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Dynamic image list (presets + uploaded images)
+  const [imageList, setImageList] = useState(DEFAULT_PRESET_IMAGES);
+  const fileInputRef = useRef(null);
 
   const isEditing = Boolean(menuToEdit);
 
+  // Load custom images from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_CUSTOM_IMAGES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setImageList(parsed);
+          return;
+        }
+      }
+    } catch (e) {}
+    setImageList(DEFAULT_PRESET_IMAGES);
+  }, [isOpen]);
+
+  // Sync form values when editing a menu
   useEffect(() => {
     if (menuToEdit) {
+      setName(menuToEdit.name || '');
+      setCategory(menuToEdit.category || 'main');
       const safeStation = (menuToEdit.station && !menuToEdit.station.includes('?') && !menuToEdit.station.includes('w'))
         ? menuToEdit.station 
         : 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)';
       setStation(safeStation);
+      setDescription(menuToEdit.description || '');
       setCalories(menuToEdit.calories || 450);
-      setAllergens(Array.isArray(menuToEdit.allergens) ? menuToEdit.allergens : []);
-      setImageUrl(menuToEdit.image_url || PRESET_FOOD_IMAGES[0].url);
+      
+      const parsedAllergens = Array.isArray(menuToEdit.allergens) 
+        ? menuToEdit.allergens 
+        : (typeof menuToEdit.allergens === 'string' && menuToEdit.allergens ? menuToEdit.allergens.split(',') : []);
+      setAllergens(parsedAllergens);
+
+      const targetImg = menuToEdit.image_url || DEFAULT_PRESET_IMAGES[0].url;
+      setImageUrl(targetImg);
+
+      // If the editing menu's image isn't in the list, add it as a thumbnail
+      setImageList(prev => {
+        if (!prev.some(item => item.url === targetImg)) {
+          return [{ id: `img-current-${Date.now()}`, name: menuToEdit.name || 'รูปปัจจุบัน', url: targetImg }, ...prev];
+        }
+        return prev;
+      });
+
       setDate(menuToEdit.date || new Date().toISOString().split('T')[0]);
       setIsSpecial(Boolean(menuToEdit.is_special));
     } else {
@@ -51,7 +92,7 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
       setDescription('');
       setCalories(450);
       setAllergens(['Gluten']);
-      setImageUrl(PRESET_FOOD_IMAGES[0].url);
+      setImageUrl(DEFAULT_PRESET_IMAGES[0].url);
       setDate(new Date().toISOString().split('T')[0]);
       setIsSpecial(false);
     }
@@ -68,9 +109,111 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
     );
   };
 
+  // Handle local image file upload & compression
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, WebP)');
+      return;
+    }
+
+    setIsUploading(true);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        // Compress & resize image via Canvas for optimal D1 payload size
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height);
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+        const newImageItem = {
+          id: `img-custom-${Date.now()}`,
+          name: file.name.replace(/\.[^/.]+$/, '').slice(0, 15),
+          url: compressedDataUrl,
+          isCustom: true
+        };
+
+        const updatedList = [newImageItem, ...imageList];
+        setImageList(updatedList);
+        setImageUrl(compressedDataUrl);
+
+        try {
+          localStorage.setItem(STORAGE_CUSTOM_IMAGES, JSON.stringify(updatedList));
+        } catch (err) {}
+
+        setIsUploading(false);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input
+    e.target.value = '';
+  };
+
+  // Delete image from preset/uploaded list
+  const handleDeleteImageFromList = (e, imgItem) => {
+    e.stopPropagation();
+    if (imageList.length <= 1) {
+      alert('ต้องมีรูปภาพในลิสต์อย่างน้อย 1 รูปครับ');
+      return;
+    }
+
+    const updatedList = imageList.filter(item => item.id !== imgItem.id);
+    setImageList(updatedList);
+
+    try {
+      localStorage.setItem(STORAGE_CUSTOM_IMAGES, JSON.stringify(updatedList));
+    } catch (err) {}
+
+    // If deleted image was currently selected, select another one
+    if (imageUrl === imgItem.url) {
+      setImageUrl(updatedList[0].url);
+    }
+  };
+
+  // Reset to default presets
+  const handleResetDefaultImages = () => {
+    if (confirm('คุณต้องการรีเซ็ตลิสต์รูปภาพกลับเป็นค่าเริ่มต้นทั้งหมดหรือไม่?')) {
+      setImageList(DEFAULT_PRESET_IMAGES);
+      setImageUrl(DEFAULT_PRESET_IMAGES[0].url);
+      try {
+        localStorage.removeItem(STORAGE_CUSTOM_IMAGES);
+      } catch (err) {}
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      alert('กรุณากรอกชื่อเมนูอาหาร');
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -82,7 +225,7 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
       description: description.trim(),
       calories: Number(calories) || 0,
       allergens,
-      image_url: imageUrl.trim() || PRESET_FOOD_IMAGES[0].url,
+      image_url: imageUrl.trim() || DEFAULT_PRESET_IMAGES[0].url,
       date,
       is_special: isSpecial,
       rating_avg: menuToEdit?.rating_avg || 5.0,
@@ -194,8 +337,8 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
                 type="text"
                 value={station}
                 onChange={(e) => setStation(e.target.value)}
-                placeholder="เช่น ซุ้มตามสั่งจานด่วน"
-                className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                placeholder="เช่น ซุ้มตามสั่งจานด่วน (เชฟสมชาย)"
+                className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium"
               />
             </div>
 
@@ -268,35 +411,78 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
             </div>
           </div>
 
-          {/* Row 5: Food Image Selector */}
-          <div className="space-y-3">
-            <label className="text-xs font-bold text-slate-700 block">
-              รูปภาพอาหาร (เลือกภาพตัวอย่างสำเร็จรูป หรือระบุลิงก์รูปเอง):
-            </label>
+          {/* Row 5: Food Image Selector & Upload & Delete in List */}
+          <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <Image className="w-4 h-4 text-orange-500" />
+                <span>รูปภาพอาหาร (เลือกจากลิสต์ หรืออัปโหลดรูปเอง):</span>
+              </label>
 
-            {/* Presets Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-              {PRESET_FOOD_IMAGES.map((img, idx) => {
+              <div className="flex items-center gap-2">
+                {/* Upload Image Button */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all transform active:scale-95"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>{isUploading ? 'กำลังประมวลผลรูป...' : '📸 อัปโหลดรูปภาพใหม่'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResetDefaultImages}
+                  className="p-1.5 rounded-xl hover:bg-slate-200 text-slate-500 hover:text-slate-700 text-xs transition-colors"
+                  title="รีเซ็ตลิสต์รูปภาพเป็นค่าเริ่มต้น"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Presets & Uploaded Images Grid with Delete Button */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-48 overflow-y-auto p-1">
+              {imageList.map((img) => {
                 const isSelected = imageUrl === img.url;
                 return (
-                  <button
-                    key={idx}
-                    type="button"
+                  <div
+                    key={img.id}
                     onClick={() => setImageUrl(img.url)}
-                    className={`relative rounded-2xl overflow-hidden h-20 border-2 transition-all group ${
-                      isSelected ? 'border-orange-500 ring-2 ring-orange-500/30 scale-105 shadow-md' : 'border-transparent hover:opacity-80'
+                    className={`relative rounded-2xl overflow-hidden h-20 border-2 transition-all cursor-pointer group ${
+                      isSelected ? 'border-orange-500 ring-2 ring-orange-500/30 scale-105 shadow-md' : 'border-slate-200 hover:border-orange-300'
                     }`}
                   >
                     <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
-                    <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[10px] text-white p-1 text-center font-medium truncate">
+                    <span className="absolute bottom-0 inset-x-0 bg-black/70 text-[10px] text-white px-1 py-0.5 text-center font-medium truncate">
                       {img.name}
                     </span>
+
+                    {/* Selected Badge */}
                     {isSelected && (
-                      <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">
+                      <div className="absolute top-1 left-1 w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold shadow">
                         ✓
                       </div>
                     )}
-                  </button>
+
+                    {/* Delete Image from list Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteImageFromList(e, img)}
+                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-rose-600 text-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow"
+                      title="ลบรูปนี้ออกจากลิสต์"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -304,11 +490,11 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
             {/* Custom URL Input */}
             <div className="pt-1">
               <input
-                type="url"
+                type="text"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="หรือวางลิงก์รูปภาพอาหาร (https://...)"
-                className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
+                placeholder="หรือวางลิงก์รูปภาพอาหาร (https://... หรือ data:image/...)"
+                className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 font-mono"
               />
             </div>
           </div>
@@ -337,35 +523,43 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
             </button>
           </div>
 
+          {/* Delete Confirmation Box (when active) */}
+          {isEditing && showDeleteConfirm && (
+            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row items-center justify-between gap-3 animate-fadeIn">
+              <div className="flex items-center gap-2 text-rose-700 text-xs font-bold">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>คุณแน่ใจหรือไม่ว่าต้องการลบเมนู "{menuToEdit?.name}" ออกจาก Cloudflare D1?</span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isSubmitting}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-500/20 transition-colors"
+                >
+                  {isSubmitting ? 'กำลังลบ...' : 'ยืนยันลบเมนู'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors"
+                >
+                  ยกเลิก
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Bottom Actions & Delete */}
           <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             
             {/* Delete button (only when editing) */}
             {isEditing ? (
-              showDeleteConfirm ? (
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <span className="text-xs font-bold text-rose-600">ยืนยันลบเมนูนี้?</span>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    disabled={isSubmitting}
-                    className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold"
-                  >
-                    ลบเลย
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteConfirm(false)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs"
-                  >
-                    ยกเลิก
-                  </button>
-                </div>
-              ) : (
+              !showDeleteConfirm && (
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-1.5 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span>ลบเมนูนี้ออกจากระบบ</span>

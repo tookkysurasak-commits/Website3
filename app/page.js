@@ -218,11 +218,13 @@ export default function Home() {
 
   // Admin: Delete Menu
   const handleDeleteMenu = async (menuId) => {
-    setMenus(prev => prev.filter(m => m.id !== menuId));
-    await fetch(`/api/menus?id=${menuId}`, {
-      method: 'DELETE'
+    executeWithAdminAuth(async () => {
+      setMenus(prev => prev.filter(m => m.id !== menuId));
+      await fetch(`/api/menus?id=${menuId}`, {
+        method: 'DELETE'
+      });
+      setTimeout(() => refreshAllData(), 500);
     });
-    setTimeout(() => refreshAllData(), 500);
   };
 
   // View specific menu reviews
@@ -269,6 +271,7 @@ export default function Home() {
               onViewMenuReviews={handleViewMenuReviews}
               onOpenAddMenu={handleOpenAddMenu}
               onOpenEditMenu={handleOpenEditMenu}
+              onDeleteMenu={handleDeleteMenu}
               isAdmin={isAdminAuthenticated}
               onToggleAdmin={() => {
                 if (isAdminAuthenticated) {
