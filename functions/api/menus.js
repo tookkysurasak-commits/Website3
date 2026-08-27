@@ -100,17 +100,15 @@ async function executeD1Query(env, sql, params = []) {
     return null;
   }
 
-  const response = await fetch(
-    https://api.cloudflare.com/client/v4/accounts/\/d1/database/\/query,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': Bearer \,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sql, params }),
-    }
-  );
+  const url = 'https://api.cloudflare.com/client/v4/accounts/' + accountId + '/d1/database/' + databaseId + '/query';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + apiToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sql, params }),
+  });
 
   const data = await response.json();
   if (!data.success) {
@@ -121,7 +119,7 @@ async function executeD1Query(env, sql, params = []) {
 
 export async function onRequestGet(context) {
   try {
-    const results = await executeD1Query(context.env, "SELECT * FROM menus ORDER BY is_special DESC, created_at DESC");
+    const results = await executeD1Query(context.env, 'SELECT * FROM menus ORDER BY is_special DESC, created_at DESC');
     if (results && results.length > 0) {
       const formatted = results.map(m => ({
         ...m,
@@ -135,7 +133,7 @@ export async function onRequestGet(context) {
       return Response.json({ success: true, data: formatted, source: 'cloudflare-d1' });
     }
   } catch (err) {
-    console.warn("D1 query fallback:", err.message);
+    console.warn('D1 query fallback:', err.message);
   }
 
   return Response.json({ success: true, data: INITIAL_MENUS, source: 'local' });
@@ -147,13 +145,12 @@ export async function onRequestPost(context) {
     const { id, name, category, description, calories, allergens, image_url, date, is_special, station } = body;
 
     const allergensStr = Array.isArray(allergens) ? allergens.join(',') : (allergens || '');
-    const menuId = id || m-\;
+    const menuId = id || ('m-' + Date.now());
     const serveDate = date || new Date().toISOString().split('T')[0];
 
     await executeD1Query(
       context.env,
-      INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?),
+      'INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         menuId, 
         name, 
@@ -186,9 +183,7 @@ export async function onRequestPut(context) {
 
     await executeD1Query(
       context.env,
-      UPDATE menus 
-       SET name = ?, category = ?, description = ?, calories = ?, allergens = ?, image_url = ?, date = ?, is_special = ?
-       WHERE id = ?,
+      'UPDATE menus SET name = ?, category = ?, description = ?, calories = ?, allergens = ?, image_url = ?, date = ?, is_special = ? WHERE id = ?',
       [
         name,
         category,
@@ -217,7 +212,7 @@ export async function onRequestDelete(context) {
       return Response.json({ success: false, error: 'Menu ID is required' }, { status: 400 });
     }
 
-    await executeD1Query(context.env, "DELETE FROM menus WHERE id = ?", [id]);
+    await executeD1Query(context.env, 'DELETE FROM menus WHERE id = ?', [id]);
 
     return Response.json({ success: true, message: 'Menu deleted from Cloudflare D1' });
   } catch (err) {

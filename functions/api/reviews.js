@@ -54,17 +54,15 @@ async function executeD1Query(env, sql, params = []) {
     return null;
   }
 
-  const response = await fetch(
-    https://api.cloudflare.com/client/v4/accounts/\/d1/database/\/query,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': Bearer \,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sql, params }),
-    }
-  );
+  const url = 'https://api.cloudflare.com/client/v4/accounts/' + accountId + '/d1/database/' + databaseId + '/query';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + apiToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sql, params }),
+  });
 
   const data = await response.json();
   if (!data.success) {
@@ -75,7 +73,7 @@ async function executeD1Query(env, sql, params = []) {
 
 export async function onRequestGet(context) {
   try {
-    const results = await executeD1Query(context.env, "SELECT * FROM reviews ORDER BY created_at DESC");
+    const results = await executeD1Query(context.env, 'SELECT * FROM reviews ORDER BY created_at DESC');
     if (results && results.length > 0) {
       const formatted = results.map(r => ({
         ...r,
@@ -91,7 +89,7 @@ export async function onRequestGet(context) {
       return Response.json({ success: true, data: formatted, source: 'cloudflare-d1' });
     }
   } catch (err) {
-    console.warn("D1 reviews query fallback:", err.message);
+    console.warn('D1 reviews query fallback:', err.message);
   }
 
   return Response.json({ success: true, data: INITIAL_REVIEWS, source: 'local' });
@@ -106,15 +104,14 @@ export async function onRequestPost(context) {
     } = body;
 
     const tagsStr = Array.isArray(tags) ? JSON.stringify(tags) : tags;
+    const reviewId = id || ('rev-' + Date.now());
+    const reviewDate = date || new Date().toISOString().split('T')[0];
 
     await executeD1Query(
       context.env,
-      INSERT INTO reviews (
-        id, menu_id, menu_name, taste_score, hygiene_score, portion_score, value_score, 
-        overall_score, employee_name, department, is_anonymous, comment, tags, photo_url, date
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),
+      'INSERT INTO reviews (id, menu_id, menu_name, taste_score, hygiene_score, portion_score, value_score, overall_score, employee_name, department, is_anonymous, comment, tags, photo_url, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
-        id || ev-\,
+        reviewId,
         menu_id,
         menu_name,
         taste_score,
@@ -128,7 +125,7 @@ export async function onRequestPost(context) {
         comment || '',
         tagsStr || '',
         photo_url || null,
-        date || new Date().toISOString().split('T')[0]
+        reviewDate
       ]
     );
 

@@ -1,15 +1,9 @@
-name = "employee-lunch-rating"
+name = "website3"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "out"
 
-# Cloudflare D1 Database Binding
 [[d1_databases]]
 binding = "DB"
 database_name = "canteen-db"
-database_id = "your-database-id-here" # แทนที่ด้วย ID ที่ได้จาก `npx wrangler d1 create canteen-db`
-migrations_dir = "./lib"
-
-# How to deploy & run with Cloudflare:
-# 1. npx wrangler d1 create canteen-db
-# 2. npx wrangler d1 execute canteen-db --local --file=./lib/schema.sql
-# 3. npm run build
+database_id = "b8c4a37f-2a23-42cc-b063-301628c98625"

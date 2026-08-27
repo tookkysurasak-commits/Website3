@@ -34,17 +34,15 @@ async function executeD1Query(env, sql, params = []) {
     return null;
   }
 
-  const response = await fetch(
-    https://api.cloudflare.com/client/v4/accounts/\/d1/database/\/query,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': Bearer \,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sql, params }),
-    }
-  );
+  const url = 'https://api.cloudflare.com/client/v4/accounts/' + accountId + '/d1/database/' + databaseId + '/query';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + apiToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sql, params }),
+  });
 
   const data = await response.json();
   if (!data.success) {
@@ -55,12 +53,12 @@ async function executeD1Query(env, sql, params = []) {
 
 export async function onRequestGet(context) {
   try {
-    const results = await executeD1Query(context.env, "SELECT * FROM menu_votes ORDER BY votes_count DESC");
+    const results = await executeD1Query(context.env, 'SELECT * FROM menu_votes ORDER BY votes_count DESC');
     if (results && results.length > 0) {
       return Response.json({ success: true, data: results, source: 'cloudflare-d1' });
     }
   } catch (err) {
-    console.warn("D1 votes query fallback:", err.message);
+    console.warn('D1 votes query fallback:', err.message);
   }
 
   return Response.json({ success: true, data: INITIAL_VOTES, source: 'local' });
@@ -74,19 +72,18 @@ export async function onRequestPost(context) {
     if (action === 'vote') {
       await executeD1Query(
         context.env,
-        "UPDATE menu_votes SET votes_count = votes_count + 1 WHERE id = ?",
+        'UPDATE menu_votes SET votes_count = votes_count + 1 WHERE id = ?',
         [dishId]
       );
       return Response.json({ success: true, message: 'Vote recorded' });
     }
 
     if (action === 'propose') {
-      const newId = ote-\;
+      const newId = 'vote-' + Date.now();
       await executeD1Query(
         context.env,
-        INSERT INTO menu_votes (id, dish_name, category, votes_count, proposed_by, status)
-         VALUES (?, ?, ?, 1, ?, 'active'),
-        [newId, dish_name, category, proposed_by || 'พนักงาน']
+        'INSERT INTO menu_votes (id, dish_name, category, votes_count, proposed_by, status) VALUES (?, ?, ?, 1, ?, ?)',
+        [newId, dish_name, category, proposed_by || 'พนักงาน', 'active']
       );
       return Response.json({ success: true, id: newId, message: 'Dish proposed' });
     }
