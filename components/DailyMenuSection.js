@@ -1,0 +1,268 @@
+'use client';
+
+import { useState } from 'react';
+import { 
+  Star, 
+  Flame, 
+  Sparkles, 
+  Plus, 
+  Edit3, 
+  Search, 
+  ChefHat, 
+  MessageSquare, 
+  Info, 
+  ShieldCheck,
+  Lock,
+  Unlock,
+  Calendar,
+  Utensils
+} from 'lucide-react';
+import { MENU_CATEGORIES, ALLERGEN_OPTIONS } from '@/lib/initial-data';
+
+export default function DailyMenuSection({ 
+  menus, 
+  onOpenRatingModal, 
+  onViewMenuReviews,
+  onOpenAddMenu,
+  onOpenEditMenu,
+  isAdmin,
+  onToggleAdmin
+}) {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredMenus = menus.filter((menu) => {
+    const matchesCategory = selectedCategory === 'all' || menu.category === selectedCategory;
+    const matchesSearch = menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (menu.station && menu.station.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
+  const getAllergenBadge = (allergenId) => {
+    const found = ALLERGEN_OPTIONS.find(a => a.id === allergenId);
+    return found ? found : { label: allergenId, color: 'bg-slate-100 text-slate-700' };
+  };
+
+  return (
+    <div className="space-y-6">
+      
+      {/* Hero Banner with Quick Highlights */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white p-6 sm:p-8 shadow-xl shadow-orange-500/15">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="max-w-2xl space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              เมนูมื้อเที่ยงพร้อมเสิร์ฟแล้ววันนี้
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+              อิ่มอร่อย สด สะอาด พร้อมฟังทุกเสียงของคุณ 🍽️
+            </h1>
+            <p className="text-orange-50 text-sm sm:text-base leading-relaxed">
+              ร่วมประเมินรสชาติและคุณภาพอาหาร เพื่อเป็นกำลังใจให้แม่ครัวและพัฒนาเมนูในทุกๆ วัน (สามารถประเมินแบบไม่ระบุชื่อได้)
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Admin Action Buttons */}
+            <button
+              onClick={onOpenAddMenu}
+              className="bg-white text-orange-600 hover:bg-orange-50 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>+ เพิ่มเมนูอาหารใหม่ (D1)</span>
+            </button>
+
+            <button
+              onClick={onToggleAdmin}
+              className={`px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
+                isAdmin 
+                  ? 'bg-slate-900 text-amber-300 border-slate-800 shadow-md' 
+                  : 'bg-white/15 text-white border-white/25 hover:bg-white/25'
+              }`}
+              title={isAdmin ? 'คลิกเพื่อล็อคโหมด Admin' : 'คลิกเพื่อปลดล็อคโหมด Admin (รหัส 147258)'}
+            >
+              {isAdmin ? <Unlock className="w-4 h-4 text-emerald-400" /> : <Lock className="w-4 h-4" />}
+              <span>{isAdmin ? 'Admin (ปลดล็อคแล้ว)' : 'ปลดล็อค Admin'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Pills & Search & Add Button Bar */}
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+        
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+          {MENU_CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                selectedCategory === cat.id
+                  ? 'bg-slate-900 text-white shadow-md'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+              }`}
+            >
+              <span>{cat.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Search & Add Action */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ค้นหาชื่อเมนู, ซุ้มอาหาร..."
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
+            />
+          </div>
+
+          <button
+            onClick={onOpenAddMenu}
+            className="p-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white shadow-sm flex items-center gap-1 text-xs font-bold transition-all sm:hidden"
+            title="เพิ่มเมนูใหม่"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+
+      </div>
+
+      {/* Menus Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredMenus.map((menu) => (
+          <div
+            key={menu.id}
+            className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col justify-between relative"
+          >
+            {/* Admin Quick Edit Button Floating (Always accessible, triggers passcode 147258 if locked) */}
+            <button
+              onClick={() => onOpenEditMenu(menu)}
+              className="absolute top-3 left-3 z-20 bg-slate-900/80 hover:bg-slate-900 text-amber-300 hover:text-white px-3 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1.5 border border-slate-700 transition-all transform hover:scale-105"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>แก้ไขเมนู</span>
+            </button>
+
+            {/* Image & Badges */}
+            <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+              <img
+                src={menu.image_url}
+                alt={menu.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+              {/* Calories Pill */}
+              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <Flame className="w-3.5 h-3.5 text-orange-400" />
+                <span>{menu.calories} kcal</span>
+              </div>
+
+              {/* Station Info Overlay */}
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
+                <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
+                  <ChefHat className="w-3.5 h-3.5 text-amber-300" />
+                  {menu.station || 'ซุ้มอาหารหลัก'}
+                </span>
+                <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
+                  ★ {Number(menu.rating_avg || 4.8).toFixed(1)} ({menu.reviews_count || 0})
+                </span>
+              </div>
+            </div>
+
+            {/* Body Info */}
+            <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-bold text-lg text-slate-800 group-hover:text-orange-600 transition-colors leading-snug">
+                    {menu.name}
+                  </h3>
+                  {menu.is_special && (
+                    <span className="shrink-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-200">
+                      ⭐ แนะนำ
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                  {menu.description || 'เมนูอาหารกลางวันแสนอร่อย ปรุงสดใหม่ทุกวัน'}
+                </p>
+              </div>
+
+              {/* Allergen Information */}
+              <div className="space-y-1.5 pt-1">
+                <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+                  <Info className="w-3 h-3 text-slate-400" />
+                  ข้อมูลสำหรับผู้แพ้อาหาร:
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {menu.allergens && menu.allergens.map((allergenId) => {
+                    const badge = getAllergenBadge(allergenId);
+                    return (
+                      <span
+                        key={allergenId}
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${badge.color}`}
+                      >
+                        {badge.label}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
+                <button
+                  onClick={() => onOpenRatingModal(menu)}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 flex items-center justify-center gap-1.5 transition-all transform active:scale-95"
+                >
+                  <Star className="w-3.5 h-3.5 fill-white" />
+                  <span>ให้คะแนน / รีวิวเมนูนี้</span>
+                </button>
+                <button
+                  onClick={() => onViewMenuReviews(menu.id)}
+                  className="p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 text-xs transition-colors"
+                  title="ดูรีวิวของเมนูนี้"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onOpenEditMenu(menu)}
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs transition-colors"
+                  title="แก้ไขเมนู (ต้องใส่รหัส 147258)"
+                >
+                  <Edit3 className="w-4 h-4 text-orange-600" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredMenus.length === 0 && (
+        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
+          <div className="w-16 h-16 mx-auto rounded-full bg-orange-100 text-orange-500 flex items-center justify-center text-2xl">
+            🍜
+          </div>
+          <h3 className="font-bold text-slate-700 text-lg">ไม่พบเมนูอาหารที่คุณค้นหา</h3>
+          <p className="text-sm text-slate-400">ลองค้นหาด้วยคำค้นอื่น หรือคลิกปุ่มเพิ่มเมนูอาหารใหม่ด้านล่าง</p>
+          <button
+            onClick={onOpenAddMenu}
+            className="mt-2 px-5 py-2.5 rounded-xl bg-orange-500 text-white text-xs font-semibold hover:bg-orange-600 transition-colors inline-flex items-center gap-1.5"
+          >
+            <Plus className="w-4 h-4" />
+            <span>เพิ่มเมนูอาหารใหม่</span>
+          </button>
+        </div>
+      )}
+
+    </div>
+  );
+}
