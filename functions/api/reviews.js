@@ -1,0 +1,139 @@
+const INITIAL_REVIEWS = [
+  {
+    id: 'rev-01',
+    menu_id: 'm-01',
+    menu_name: 'ข้าวกะเพราหมูกรอบไข่ดาวลาวา',
+    taste_score: 5,
+    hygiene_score: 5,
+    portion_score: 5,
+    value_score: 5,
+    overall_score: 5.0,
+    employee_name: 'คุณณัฐพล (Dev Team)',
+    department: 'Engineering',
+    is_anonymous: false,
+    comment: 'หมูกรอบกรอบมากกกก ไม่อมน้ำมันเลย พริกกระเทียมผัดมาหอมกลิ่นกระทะสุดๆ ไข่ดาวไข่แดงเยิ้มกำลังดี วันนี้ฟินมากครับ!',
+    tags: ['?? อร่อยกลมกล่อม', '?? ร้อนกำลังดี', '?? ให้เยอะจุใจ'],
+    photo_url: null,
+    helpful_count: 14,
+    date: '2026-08-27',
+    created_at: '2026-08-27T12:15:00.000Z'
+  },
+  {
+    id: 'rev-02',
+    menu_id: 'm-02',
+    menu_name: 'ต้มยำกุ้งน้ำข้นยอดมะพร้าวอ่อน',
+    taste_score: 4,
+    hygiene_score: 5,
+    portion_score: 4,
+    value_score: 5,
+    overall_score: 4.5,
+    employee_name: 'พนักงานไม่ประสงค์ออกนาม',
+    department: 'Marketing',
+    is_anonymous: true,
+    comment: 'กุ้งตัวใหญ่และสดมาก ไม่คาวเลย รสชาติเข้มข้น แต่อยากให้ลดเปรี้ยวลงนิดนึงจะกลมกล่อมเพอร์เฟกต์มากค่ะ',
+    tags: ['?? วัตถุดิบสดใหม่', '? สะอาดถูกสุขอนามัย', '??? เผ็ดจัดจ้านสะใจ'],
+    photo_url: null,
+    helpful_count: 8,
+    date: '2026-08-27',
+    created_at: '2026-08-27T12:28:00.000Z'
+  }
+];
+
+async function executeD1Query(env, sql, params = []) {
+  if (env.DB && typeof env.DB.prepare === 'function') {
+    const stmt = env.DB.prepare(sql).bind(...params);
+    const { results } = await stmt.all();
+    return results;
+  }
+
+  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
+  const databaseId = env.CLOUDFLARE_DATABASE_ID;
+  const apiToken = env.CLOUDFLARE_API_TOKEN;
+
+  if (!accountId || !apiToken || !databaseId) {
+    return null;
+  }
+
+  const response = await fetch(
+    https://api.cloudflare.com/client/v4/accounts/\/d1/database/\/query,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': Bearer \,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sql, params }),
+    }
+  );
+
+  const data = await response.json();
+  if (!data.success) {
+    throw new Error(data.errors?.[0]?.message || 'D1 query failed');
+  }
+  return data.result?.[0]?.results || [];
+}
+
+export async function onRequestGet(context) {
+  try {
+    const results = await executeD1Query(context.env, "SELECT * FROM reviews ORDER BY created_at DESC");
+    if (results && results.length > 0) {
+      const formatted = results.map(r => ({
+        ...r,
+        tags: typeof r.tags === 'string' ? (r.tags.startsWith('[') ? JSON.parse(r.tags) : r.tags.split(',')) : (r.tags || []),
+        overall_score: Number(r.overall_score),
+        taste_score: Number(r.taste_score),
+        hygiene_score: Number(r.hygiene_score),
+        portion_score: Number(r.portion_score),
+        value_score: Number(r.value_score),
+        helpful_count: Number(r.helpful_count || 0),
+        is_anonymous: Boolean(r.is_anonymous)
+      }));
+      return Response.json({ success: true, data: formatted, source: 'cloudflare-d1' });
+    }
+  } catch (err) {
+    console.warn("D1 reviews query fallback:", err.message);
+  }
+
+  return Response.json({ success: true, data: INITIAL_REVIEWS, source: 'local' });
+}
+
+export async function onRequestPost(context) {
+  try {
+    const body = await context.request.json();
+    const {
+      id, menu_id, menu_name, taste_score, hygiene_score, portion_score, value_score,
+      overall_score, employee_name, department, is_anonymous, comment, tags, photo_url, date
+    } = body;
+
+    const tagsStr = Array.isArray(tags) ? JSON.stringify(tags) : tags;
+
+    await executeD1Query(
+      context.env,
+      INSERT INTO reviews (
+        id, menu_id, menu_name, taste_score, hygiene_score, portion_score, value_score, 
+        overall_score, employee_name, department, is_anonymous, comment, tags, photo_url, date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),
+      [
+        id || ev-\,
+        menu_id,
+        menu_name,
+        taste_score,
+        hygiene_score,
+        portion_score,
+        value_score,
+        overall_score,
+        employee_name || 'พนักงาน',
+        department || 'ทั่วไป',
+        is_anonymous ? 1 : 0,
+        comment || '',
+        tagsStr || '',
+        photo_url || null,
+        date || new Date().toISOString().split('T')[0]
+      ]
+    );
+
+    return Response.json({ success: true, message: 'Review saved to D1' });
+  } catch (err) {
+    return Response.json({ success: false, error: err.message }, { status: 500 });
+  }
+}
