@@ -49,19 +49,44 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
 
   reviews.forEach(r => {
     if (menuStatsMap[r.menu_id]) {
-      menuStatsMap[r.menu_id].totalScore += r.overall_score;
+      menuStatsMap[r.menu_id].totalScore += Number(r.overall_score || 0);
       menuStatsMap[r.menu_id].count += 1;
     }
   });
 
-  const menuStatsArray = Object.values(menuStatsMap).map(m => ({
-    ...m,
-    calculatedAvg: m.count > 0 ? (m.totalScore / m.count) : m.rating_avg,
-    reviewCount: m.count > 0 ? m.count : m.reviews_count
-  }));
+  const menuStatsArray = Object.values(menuStatsMap).map(m => {
+    const hasLiveReviews = m.count > 0;
+    const reviewCount = hasLiveReviews ? m.count : (m.reviews_count || 0);
+    const calculatedAvg = hasLiveReviews 
+      ? (m.totalScore / m.count) 
+      : (m.reviews_count > 0 && m.rating_avg ? m.rating_avg : 0);
 
-  const topDishes = [...menuStatsArray].sort((a, b) => b.calculatedAvg - a.calculatedAvg).slice(0, 3);
-  const lowestDish = [...menuStatsArray].sort((a, b) => a.calculatedAvg - b.calculatedAvg)[0];
+    return {
+      ...m,
+      calculatedAvg,
+      reviewCount
+    };
+  });
+
+  // Sort menus with reviews first (highest score, then most reviews)
+  const ratedMenus = menuStatsArray
+    .filter(m => m.reviewCount > 0)
+    .sort((a, b) => {
+      if (b.calculatedAvg !== a.calculatedAvg) {
+        return b.calculatedAvg - a.calculatedAvg;
+      }
+      return b.reviewCount - a.reviewCount;
+    });
+
+  // Top 3: show rated menus first, or fallback to any menus if no reviews yet
+  const topDishes = ratedMenus.length > 0 
+    ? ratedMenus.slice(0, 3) 
+    : [...menuStatsArray].slice(0, 3);
+
+  // Lowest rated dish (only among dishes with actual reviews)
+  const lowestDish = ratedMenus.length > 0 
+    ? [...ratedMenus].sort((a, b) => a.calculatedAvg - b.calculatedAvg)[0] 
+    : null;
 
   // Export to CSV Function
   const exportToCSV = () => {
@@ -258,16 +283,26 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
 
             <div className="space-y-2.5">
               {topDishes.map((dish, i) => (
-                <div key={dish.id} className="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-50">
+                <div key={dish.id} className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                   <div className="flex items-center gap-2 truncate">
-                    <span className="font-black text-amber-600">#{i + 1}</span>
+                    <span className={`font-black ${i === 0 ? 'text-amber-600' : i === 1 ? 'text-slate-600' : 'text-amber-700'}`}>
+                      #{i + 1}
+                    </span>
                     <span className="font-bold text-slate-800 truncate">{dish.name}</span>
                   </div>
-                  <span className="font-extrabold text-amber-600 shrink-0 ml-2">
-                    ★ {Number(dish.calculatedAvg).toFixed(1)}
-                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                    <span className="font-extrabold text-amber-600">
+                      ★ {dish.reviewCount > 0 ? Number(dish.calculatedAvg).toFixed(1) : '-'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-normal">
+                      ({dish.reviewCount || 0} รีวิว)
+                    </span>
+                  </div>
                 </div>
               ))}
+              {topDishes.length === 0 && (
+                <p className="text-xs text-slate-400 text-center py-2">ยังไม่มีข้อมูลเมนู</p>
+              )}
             </div>
           </div>
 

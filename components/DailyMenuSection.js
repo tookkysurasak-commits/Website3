@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { 
@@ -209,7 +209,7 @@ export default function DailyMenuSection({
                   {(!menu.station || menu.station.includes('?') || menu.station.includes('w')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
                 </span>
                 <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
-                  ★ {Number(menu.rating_avg || 4.8).toFixed(1)} ({menu.reviews_count || 0})
+                  ★ {menu.reviews_count > 0 ? Number(menu.rating_avg || 0).toFixed(1) : '-'} ({menu.reviews_count || 0})
                 </span>
               </div>
             </div>

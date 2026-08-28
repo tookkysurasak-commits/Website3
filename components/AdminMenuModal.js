@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { X, Plus, Edit3, Trash2, Image, Sparkles, CheckCircle2, Flame, Utensils, AlertCircle, ChefHat, Calendar, Upload, RefreshCw } from 'lucide-react';
@@ -228,7 +228,7 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
       image_url: imageUrl.trim() || DEFAULT_PRESET_IMAGES[0].url,
       date,
       is_special: isSpecial,
-      rating_avg: menuToEdit?.rating_avg || 5.0,
+      rating_avg: menuToEdit?.rating_avg || 0,
       reviews_count: menuToEdit?.reviews_count || 0
     };
 

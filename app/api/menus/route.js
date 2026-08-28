@@ -39,7 +39,7 @@ export async function GET(request) {
         allergens: typeof m.allergens === 'string' ? (m.allergens ? m.allergens.split(',') : []) : (m.allergens || []),
         calories: Number(m.calories || 0),
         is_special: Boolean(m.is_special),
-        rating_avg: Number(m.rating_avg || 4.8),
+        rating_avg: Number(m.rating_avg || 0),
         reviews_count: Number(m.reviews_count || 0),
         station: m.station || 'ซุ้มอาหารหลัก'
       }));

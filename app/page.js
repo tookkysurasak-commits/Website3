@@ -68,8 +68,14 @@ export default function Home() {
     setMenus(prevMenus => {
       return prevMenus.map(menu => {
         const menuReviews = reviews.filter(r => r.menu_id === menu.id);
-        if (menuReviews.length === 0) return menu;
-        const total = menuReviews.reduce((sum, r) => sum + r.overall_score, 0);
+        if (menuReviews.length === 0) {
+          return {
+            ...menu,
+            rating_avg: menu.reviews_count > 0 && menu.rating_avg ? menu.rating_avg : 0,
+            reviews_count: menu.reviews_count || 0
+          };
+        }
+        const total = menuReviews.reduce((sum, r) => sum + Number(r.overall_score || 0), 0);
         const avg = Number((total / menuReviews.length).toFixed(1));
         return {
           ...menu,
@@ -238,7 +244,7 @@ export default function Home() {
     totalReviews: reviews.length,
     avgRating: reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.overall_score, 0) / reviews.length
-      : 4.8
+      : 0
   };
 
   return (
