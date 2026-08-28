@@ -37,15 +37,22 @@ export default function Home() {
   // Load data on mount from API (which queries Cloudflare D1) or fallback to localStorage
   const refreshAllData = async () => {
     try {
-      const [resMenus, resReviews, resVotes] = await Promise.all([
-        fetch('/api/menus').then(r => r.json()),
-        fetch('/api/reviews').then(r => r.json()),
-        fetch('/api/votes').then(r => r.json()),
+      const [resMenus, resReviews, resVotes, resConfig] = await Promise.all([
+        fetch('/api/menus').then(r => r.json()).catch(() => null),
+        fetch('/api/reviews').then(r => r.json()).catch(() => null),
+        fetch('/api/votes').then(r => r.json()).catch(() => null),
+        fetch('/api/config').then(r => r.json()).catch(() => null),
       ]);
 
       if (resMenus?.data && resMenus.data.length > 0) setMenus(resMenus.data);
       if (resReviews?.data && resReviews.data.length > 0) setReviews(resReviews.data);
       if (resVotes?.data && resVotes.data.length > 0) setVotes(resVotes.data);
+      if (resConfig?.data) {
+        setSiteConfig(resConfig.data);
+        try {
+          localStorage.setItem('canteen_site_config', JSON.stringify(resConfig.data));
+        } catch (e) {}
+      }
     } catch (err) {
       console.warn("Using local storage fallback", err);
     }
@@ -220,7 +227,14 @@ export default function Home() {
     setSiteConfig(newConfig);
     try {
       localStorage.setItem('canteen_site_config', JSON.stringify(newConfig));
-    } catch (e) {}
+      await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConfig)
+      });
+    } catch (e) {
+      console.warn("Could not save site config to D1:", e);
+    }
   };
 
   // Admin: Save or Update Menu
