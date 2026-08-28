@@ -160,7 +160,7 @@ export default function AdminPasswordModal({ isOpen, onClose, onSuccess }) {
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold shadow-md shadow-orange-500/20 transition-all active:scale-95"
+              className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white text-xs font-bold shadow-md shadow-purple-600/20 transition-all active:scale-95"
             >
               ยืนยันรหัสผ่าน
             </button>

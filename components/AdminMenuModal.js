@@ -620,7 +620,7 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold shadow-md shadow-orange-500/20 flex items-center gap-2 transition-all transform active:scale-95"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white text-xs font-bold shadow-md shadow-purple-600/20 flex items-center gap-2 transition-all transform active:scale-95"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{isSubmitting ? 'กำลังบันทึกลง D1...' : isEditing ? 'บันทึกการแก้ไขลง D1' : 'เพิ่มเมนูลง Cloudflare D1 🎉'}</span>

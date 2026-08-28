@@ -66,15 +66,15 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
     <div className="space-y-6">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-purple-700 via-indigo-600 to-orange-500 rounded-3xl text-white p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-purple-600/10">
+      <div className="bg-gradient-to-r from-purple-900 via-purple-700 to-fuchsia-600 rounded-3xl text-white p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-purple-900/20">
         <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider text-pink-100">
+              <Sparkles className="w-3.5 h-3.5 text-pink-200" />
               โหวตเมนูสำหรับสัปดาห์หน้า
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
               อยากทานอะไรในสัปดาห์หน้า? โหวตเลย! 🗳️
             </h2>
             <p className="text-purple-100 text-xs sm:text-sm leading-relaxed">
@@ -86,7 +86,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
             onClick={() => setIsProposeModalOpen(true)}
             className="px-5 py-3.5 rounded-2xl bg-white text-purple-900 hover:bg-purple-50 font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
           >
-            <Plus className="w-4 h-4 text-purple-700" />
+            <Plus className="w-4 h-4 text-fuchsia-600 stroke-[3]" />
             <span>เสนอเมนูใหม่ที่คุณอยากกิน</span>
           </button>
         </div>
@@ -104,7 +104,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
               key={dish.id}
               className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 ${
                 index === 0
-                  ? 'border-amber-300 ring-2 ring-amber-400/20 shadow-md'
+                  ? 'border-purple-300 ring-2 ring-purple-400/20 shadow-md'
                   : 'border-slate-200/80 shadow-sm hover:shadow-md'
               }`}
             >
@@ -120,7 +120,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                     <h3 className="font-extrabold text-base sm:text-lg text-slate-800 flex items-center gap-2">
                       <span>{dish.dish_name}</span>
                       {dish.tags?.map((t, idx) => (
-                        <span key={idx} className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-semibold">
+                        <span key={idx} className="text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md font-semibold">
                           {t}
                         </span>
                       ))}
@@ -149,7 +149,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                     className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all transform active:scale-95 ${
                       hasVoted
                         ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                        : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 hover:shadow-orange-500/30'
+                        : 'bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white shadow-md shadow-purple-600/20 hover:shadow-purple-600/30'
                     }`}
                   >
                     {hasVoted ? (
@@ -173,7 +173,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
                     index === 0
-                      ? 'bg-gradient-to-r from-amber-400 to-orange-500'
+                      ? 'bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500'
                       : 'bg-gradient-to-r from-indigo-500 to-purple-500'
                   }`}
                   style={{ width: `${Math.max(percent, 4)}%` }}

@@ -114,7 +114,7 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-8">
         
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white p-6 relative">
+        <div className="bg-gradient-to-r from-purple-900 via-purple-700 to-fuchsia-600 text-white p-6 relative">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
@@ -127,7 +127,7 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
               ⭐
             </div>
             <div>
-              <span className="text-xs uppercase font-semibold text-orange-100 tracking-wider">
+              <span className="text-xs uppercase font-semibold text-purple-200 tracking-wider">
                 แบบประเมินความพึงพอใจ
               </span>
               <h2 className="text-xl sm:text-2xl font-bold line-clamp-1">
@@ -145,7 +145,7 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
                 <span>ให้คะแนนคุณภาพ 4 มิติ</span>
-                <span className="text-xs font-normal text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+                <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
                   เฉลี่ย: {calculateOverallScore()} / 5.0 ⭐
                 </span>
               </h3>
@@ -326,7 +326,7 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white font-bold text-sm shadow-lg shadow-purple-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{isSubmitting ? 'กำลังส่งข้อมูล...' : 'ยืนยันและส่งคะแนนประเมิน 🎉'}</span>

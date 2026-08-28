@@ -85,28 +85,29 @@ export default function DailyMenuSection({
     <div className="space-y-6">
       
       {/* Hero Banner with Quick Highlights */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white p-6 sm:p-8 shadow-xl shadow-orange-500/15">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-900 via-purple-700 to-fuchsia-600 text-white p-6 sm:p-8 shadow-xl shadow-purple-900/20">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/3 -mb-16 w-48 h-48 rounded-full bg-pink-500/20 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider text-pink-100">
+                <Sparkles className="w-3.5 h-3.5 text-pink-200" />
                 {siteConfig?.bannerBadge || 'เมนูมื้อเที่ยงพร้อมเสิร์ฟแล้ววันนี้'}
               </div>
               <button
                 onClick={onOpenSiteConfigModal}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 hover:bg-black/40 text-amber-200 hover:text-white text-[11px] font-semibold backdrop-blur-sm transition-all border border-white/20"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 hover:bg-black/40 text-fuchsia-200 hover:text-white text-[11px] font-semibold backdrop-blur-sm transition-all border border-white/20"
                 title="คลิกเพื่อแก้ไขหัวข้อ & ข้อความแบนเนอร์"
               >
                 <Edit3 className="w-3 h-3" />
                 <span>แก้ไขข้อความแบนเนอร์/นโยบาย</span>
               </button>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white drop-shadow-sm">
               {siteConfig?.bannerTitle || 'อิ่มอร่อย สด สะอาด พร้อมฟังทุกเสียงของคุณ 🍽️'}
             </h1>
-            <p className="text-orange-50 text-sm sm:text-base leading-relaxed">
+            <p className="text-purple-100 text-sm sm:text-base leading-relaxed">
               {siteConfig?.bannerSubtitle || 'ร่วมประเมินรสชาติและคุณภาพอาหาร เพื่อเป็นกำลังใจให้แม่ครัวและพัฒนาเมนูในทุกๆ วัน (สามารถประเมินแบบไม่ระบุชื่อได้)'}
             </p>
           </div>
@@ -115,9 +116,9 @@ export default function DailyMenuSection({
             {/* Admin Action Buttons */}
             <button
               onClick={onOpenAddMenu}
-              className="bg-white text-orange-600 hover:bg-orange-50 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+              className="bg-white text-purple-800 hover:bg-purple-50 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-lg shadow-black/10 flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 stroke-[3] text-fuchsia-600" />
               <span>+ เพิ่มเมนูอาหารใหม่ (D1)</span>
             </button>
 
@@ -216,7 +217,7 @@ export default function DailyMenuSection({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ค้นหาชื่อเมนู, ซุ้มอาหาร..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 shadow-sm"
           />
           {searchQuery && (
             <button
@@ -299,7 +300,7 @@ export default function DailyMenuSection({
             <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-bold text-lg text-slate-800 group-hover:text-orange-600 transition-colors leading-snug">
+                  <h3 className="font-bold text-lg text-slate-800 group-hover:text-purple-700 transition-colors leading-snug">
                     {menu.name}
                   </h3>
                   {menu.is_special && (
@@ -338,21 +339,21 @@ export default function DailyMenuSection({
               <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
                 <button
                   onClick={() => onOpenRatingModal(menu)}
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 flex items-center justify-center gap-1.5 transition-all transform active:scale-95"
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white text-xs font-bold shadow-md shadow-purple-600/20 hover:shadow-purple-600/30 flex items-center justify-center gap-1.5 transition-all transform active:scale-95"
                 >
                   <Star className="w-3.5 h-3.5 fill-white" />
                   <span>ให้คะแนน / รีวิวเมนูนี้</span>
                 </button>
                 <button
                   onClick={() => onViewMenuReviews(menu.id)}
-                  className="p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 text-xs transition-colors"
+                  className="p-2.5 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50/50 text-slate-600 text-xs transition-colors"
                   title="ดูรีวิวของเมนูนี้"
                 >
                   <MessageSquare className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => onOpenEditMenu(menu)}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-orange-100 text-slate-700 hover:text-orange-600 text-xs transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-700 text-xs transition-colors"
                   title="แก้ไขเมนู"
                 >
                   <Edit3 className="w-4 h-4" />
@@ -373,14 +374,14 @@ export default function DailyMenuSection({
 
       {filteredMenus.length === 0 && (
         <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
-          <div className="w-16 h-16 mx-auto rounded-full bg-orange-100 text-orange-500 flex items-center justify-center text-2xl">
+          <div className="w-16 h-16 mx-auto rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
             🍜
           </div>
           <h3 className="font-bold text-slate-700 text-lg">ไม่พบเมนูอาหารที่คุณค้นหา</h3>
           <p className="text-sm text-slate-400">ลองค้นหาด้วยคำค้นอื่น หรือคลิกปุ่มเพิ่มเมนูอาหารใหม่ด้านล่าง</p>
           <button
             onClick={onOpenAddMenu}
-            className="mt-2 px-5 py-2.5 rounded-xl bg-orange-500 text-white text-xs font-semibold hover:bg-orange-600 transition-colors inline-flex items-center gap-1.5"
+            className="mt-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white text-xs font-semibold hover:from-purple-700 hover:to-fuchsia-700 transition-all inline-flex items-center gap-1.5 shadow-md shadow-purple-500/20"
           >
             <Plus className="w-4 h-4" />
             <span>เพิ่มเมนูอาหารใหม่</span>
