@@ -29,8 +29,10 @@ export default function DailyMenuSection({
   onOpenAddMenu,
   onOpenEditMenu,
   onDeleteMenu,
-  isAdmin,
-  onToggleAdmin
+  onOpenSiteConfigModal,
+  isAdmin, 
+  onToggleAdmin,
+  siteConfig
 }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,15 +73,25 @@ export default function DailyMenuSection({
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              เมนูมื้อเที่ยงพร้อมเสิร์ฟแล้ววันนี้
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" />
+                {siteConfig?.bannerBadge || 'เมนูมื้อเที่ยงพร้อมเสิร์ฟแล้ววันนี้'}
+              </div>
+              <button
+                onClick={onOpenSiteConfigModal}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 hover:bg-black/40 text-amber-200 hover:text-white text-[11px] font-semibold backdrop-blur-sm transition-all border border-white/20"
+                title="คลิกเพื่อแก้ไขหัวข้อ & ข้อความแบนเนอร์"
+              >
+                <Edit3 className="w-3 h-3" />
+                <span>แก้ไขข้อความแบนเนอร์/นโยบาย</span>
+              </button>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
-              อิ่มอร่อย สด สะอาด พร้อมฟังทุกเสียงของคุณ 🍽️
+              {siteConfig?.bannerTitle || 'อิ่มอร่อย สด สะอาด พร้อมฟังทุกเสียงของคุณ 🍽️'}
             </h1>
             <p className="text-orange-50 text-sm sm:text-base leading-relaxed">
-              ร่วมประเมินรสชาติและคุณภาพอาหาร เพื่อเป็นกำลังใจให้แม่ครัวและพัฒนาเมนูในทุกๆ วัน (สามารถประเมินแบบไม่ระบุชื่อได้)
+              {siteConfig?.bannerSubtitle || 'ร่วมประเมินรสชาติและคุณภาพอาหาร เพื่อเป็นกำลังใจให้แม่ครัวและพัฒนาเมนูในทุกๆ วัน (สามารถประเมินแบบไม่ระบุชื่อได้)'}
             </p>
           </div>
 

@@ -1,13 +1,23 @@
 'use client';
 
-import { Utensils, MessageSquareHeart, Vote, BarChart3, Plus, Database, CalendarDays, Lock, Unlock, ShieldCheck } from 'lucide-react';
+import { Utensils, MessageSquareHeart, Vote, BarChart3, Plus, Database, CalendarDays, Lock, Unlock, ShieldCheck, Settings } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab, todayStats, onOpenD1Modal, onOpenAddMenu, isAdmin, onToggleAdmin }) {
+export default function Navbar({ 
+  activeTab, 
+  setActiveTab, 
+  todayStats, 
+  onOpenD1Modal, 
+  onOpenAddMenu, 
+  onOpenSiteConfigModal,
+  isAdmin, 
+  onToggleAdmin,
+  siteConfig 
+}) {
   const tabs = [
-    { id: 'menu', label: 'เมนูวันนี้', icon: Utensils, badge: `${todayStats?.totalMenus || 5} เมนู` },
-    { id: 'reviews', label: 'รีวิว & ความคิดเห็น', icon: MessageSquareHeart, badge: `${todayStats?.totalReviews || 0}` },
-    { id: 'voting', label: 'โหวตเมนูสัปดาห์หน้า', icon: Vote, badge: '🔥 Hot' },
-    { id: 'dashboard', label: 'แดชบอร์ด HR/แม่ครัว', icon: BarChart3, badge: 'Admin' },
+    { id: 'menu', label: siteConfig?.tabMenu || 'เมนูวันนี้', icon: Utensils, badge: `${todayStats?.totalMenus || 5} เมนู` },
+    { id: 'reviews', label: siteConfig?.tabReviews || 'รีวิว & ความคิดเห็น', icon: MessageSquareHeart, badge: `${todayStats?.totalReviews || 0}` },
+    { id: 'voting', label: siteConfig?.tabVoting || 'โหวตเมนูสัปดาห์หน้า', icon: Vote, badge: '🔥 Hot' },
+    { id: 'dashboard', label: siteConfig?.tabDashboard || 'แดชบอร์ด HR/แม่ครัว', icon: BarChart3, badge: 'Admin' },
   ];
 
   const currentDateFormatted = new Intl.DateTimeFormat('th-TH', {
@@ -30,10 +40,10 @@ export default function Navbar({ activeTab, setActiveTab, todayStats, onOpenD1Mo
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
-                  YumCanteen
+                  {siteConfig?.brandName || 'YumCanteen'}
                 </span>
                 <span className="hidden sm:inline-block px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-700 rounded-full border border-orange-200">
-                  ระบบประเมินอาหารพนักงาน
+                  {siteConfig?.brandSubtitle || 'ระบบประเมินอาหารพนักงาน'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 flex items-center gap-1 font-medium">
@@ -43,7 +53,7 @@ export default function Navbar({ activeTab, setActiveTab, todayStats, onOpenD1Mo
             </div>
           </div>
 
-          {/* Actions: Add Menu Button, Admin Lock Status & D1 Status Badge */}
+          {/* Actions: Add Menu Button, Admin Edit Header Button, Admin Lock Status & D1 Status Badge */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             
             {/* Quick Add Menu Button */}
@@ -53,6 +63,16 @@ export default function Navbar({ activeTab, setActiveTab, todayStats, onOpenD1Mo
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span className="hidden sm:inline">เพิ่มเมนูใหม่</span>
+            </button>
+
+            {/* Admin Header Customization Button (Visible to all or highlighted for admin) */}
+            <button
+              onClick={onOpenSiteConfigModal}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition-all shadow-sm"
+              title="แก้ไขชื่อหัวข้อใหญ่ & ข้อความแบนเนอร์นโยบาย"
+            >
+              <Settings className="w-3.5 h-3.5 text-amber-600" />
+              <span className="hidden md:inline">แก้ไขหัวข้อ & แบนเนอร์</span>
             </button>
 
             {/* Admin Lock / Unlock Status Button */}

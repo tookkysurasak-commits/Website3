@@ -10,8 +10,9 @@ import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 import CloudflareD1Modal from '@/components/CloudflareD1Modal';
 import AdminMenuModal from '@/components/AdminMenuModal';
 import AdminPasswordModal from '@/components/AdminPasswordModal';
+import AdminSiteConfigModal from '@/components/AdminSiteConfigModal';
 
-import { INITIAL_MENUS, INITIAL_REVIEWS, INITIAL_VOTES } from '@/lib/initial-data';
+import { INITIAL_MENUS, INITIAL_REVIEWS, INITIAL_VOTES, DEFAULT_SITE_CONFIG } from '@/lib/initial-data';
 import { StorageKeys } from '@/lib/db';
 
 export default function Home() {
@@ -19,10 +20,12 @@ export default function Home() {
   const [menus, setMenus] = useState(INITIAL_MENUS);
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [votes, setVotes] = useState(INITIAL_VOTES);
+  const [siteConfig, setSiteConfig] = useState(DEFAULT_SITE_CONFIG);
   
   const [selectedMenuForRating, setSelectedMenuForRating] = useState(null);
   const [isD1ModalOpen, setIsD1ModalOpen] = useState(false);
   const [isAdminMenuModalOpen, setIsAdminMenuModalOpen] = useState(false);
+  const [isSiteConfigModalOpen, setIsSiteConfigModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [pendingAdminAction, setPendingAdminAction] = useState(null); // callback after password verified
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false); // requires 147258
@@ -58,6 +61,9 @@ export default function Home() {
       const savedUserVotes = localStorage.getItem(StorageKeys.USER_VOTED_IDS);
       if (savedUserVotes) setUserVotedIds(JSON.parse(savedUserVotes));
       
+      const savedConfig = localStorage.getItem('canteen_site_config');
+      if (savedConfig) setSiteConfig(JSON.parse(savedConfig));
+
       const savedAuth = sessionStorage.getItem('canteen_admin_auth');
       if (savedAuth === 'true') setIsAdminAuthenticated(true);
     } catch (e) {}
@@ -202,6 +208,21 @@ export default function Home() {
     });
   };
 
+  // Admin: Open Site Config Modal (Tab names & Banner Slogan)
+  const handleOpenSiteConfigModal = () => {
+    executeWithAdminAuth(() => {
+      setIsSiteConfigModalOpen(true);
+    });
+  };
+
+  // Admin: Save Site Config
+  const handleSaveSiteConfig = async (newConfig) => {
+    setSiteConfig(newConfig);
+    try {
+      localStorage.setItem('canteen_site_config', JSON.stringify(newConfig));
+    } catch (e) {}
+  };
+
   // Admin: Save or Update Menu
   const handleSaveMenu = async (menuData, isEditing) => {
     if (isEditing) {
@@ -256,8 +277,10 @@ export default function Home() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           todayStats={todayStats}
+          siteConfig={siteConfig}
           onOpenD1Modal={() => setIsD1ModalOpen(true)}
           onOpenAddMenu={handleOpenAddMenu}
+          onOpenSiteConfigModal={handleOpenSiteConfigModal}
           isAdmin={isAdminAuthenticated}
           onToggleAdmin={() => {
             if (isAdminAuthenticated) {
@@ -273,11 +296,13 @@ export default function Home() {
           {activeTab === 'menu' && (
             <DailyMenuSection
               menus={menus}
+              siteConfig={siteConfig}
               onOpenRatingModal={(menu) => setSelectedMenuForRating(menu)}
               onViewMenuReviews={handleViewMenuReviews}
               onOpenAddMenu={handleOpenAddMenu}
               onOpenEditMenu={handleOpenEditMenu}
               onDeleteMenu={handleDeleteMenu}
+              onOpenSiteConfigModal={handleOpenSiteConfigModal}
               isAdmin={isAdminAuthenticated}
               onToggleAdmin={() => {
                 if (isAdminAuthenticated) {
@@ -363,6 +388,14 @@ export default function Home() {
       <CloudflareD1Modal
         isOpen={isD1ModalOpen}
         onClose={() => setIsD1ModalOpen(false)}
+      />
+
+      {/* Admin Site Header & Slogan Config Modal */}
+      <AdminSiteConfigModal
+        isOpen={isSiteConfigModalOpen}
+        onClose={() => setIsSiteConfigModalOpen(false)}
+        siteConfig={siteConfig}
+        onSaveConfig={handleSaveSiteConfig}
       />
 
     </div>
