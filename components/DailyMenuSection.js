@@ -20,7 +20,7 @@ import {
   AlertCircle,
   X
 } from 'lucide-react';
-import { MENU_CATEGORIES, ALLERGEN_OPTIONS } from '@/lib/initial-data';
+import { MENU_CATEGORIES, ALLERGEN_OPTIONS, DAYS_OF_WEEK, getMenuDayInfo } from '@/lib/initial-data';
 
 export default function DailyMenuSection({ 
   menus, 
@@ -34,18 +34,34 @@ export default function DailyMenuSection({
   onToggleAdmin,
   siteConfig
 }) {
+  const [selectedDay, setSelectedDay] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [menuToDelete, setMenuToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredMenus = menus.filter((menu) => {
-    const matchesCategory = selectedCategory === 'all' || menu.category === selectedCategory;
-    const matchesSearch = menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (menu.station && menu.station.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  // Filter & Sort menus chronologically by Day (Monday = 1 -> Saturday = 6)
+  const filteredMenus = menus
+    .filter((menu) => {
+      const dayInfo = getMenuDayInfo(menu.date);
+      const matchesDay = selectedDay === 'all' || String(dayInfo.dayNum) === String(selectedDay);
+      const matchesCategory = selectedCategory === 'all' || menu.category === selectedCategory;
+      const matchesSearch = menu.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            menu.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            (menu.station && menu.station.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesDay && matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      const dayA = getMenuDayInfo(a.date).dayNum;
+      const dayB = getMenuDayInfo(b.date).dayNum;
+      if (dayA !== dayB) {
+        return dayA - dayB; // 1 (วันจันทร์) -> 2 (วันอังคาร) -> ... -> 6 (วันเสาร์)
+      }
+      if (a.is_special !== b.is_special) {
+        return b.is_special ? 1 : -1;
+      }
+      return a.name.localeCompare(b.name, 'th');
+    });
 
   const getAllergenBadge = (allergenId) => {
     const found = ALLERGEN_OPTIONS.find(a => a.id === allergenId);
@@ -120,6 +136,49 @@ export default function DailyMenuSection({
         </div>
       </div>
 
+      {/* Day of Week Selector Bar (จันทร์ - เสาร์) */}
+      <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+            <div className="p-1.5 rounded-xl bg-orange-100 text-orange-600">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <span>ตารางเมนูอาหารประจำสัปดาห์ (เรียงตามวันจันทร์ - เสาร์):</span>
+          </div>
+
+          <span className="text-[11px] text-slate-400">
+            แสดงทั้งหมด {filteredMenus.length} เมนู
+          </span>
+        </div>
+
+        {/* Day Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {DAYS_OF_WEEK.map((day) => {
+            const isSelected = selectedDay === day.id;
+            const count = day.id === 'all'
+              ? menus.length
+              : menus.filter(m => String(getMenuDayInfo(m.date).dayNum) === String(day.dayNum)).length;
+
+            return (
+              <button
+                key={day.id}
+                onClick={() => setSelectedDay(day.id)}
+                className={`px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/20 scale-105'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                }`}
+              >
+                <span>{day.name}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200/80 text-slate-600'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Category Pills & Search */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         
@@ -172,59 +231,68 @@ export default function DailyMenuSection({
 
       {/* Menu Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredMenus.map((menu) => (
-          <div
-            key={menu.id}
-            className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col justify-between relative"
-          >
-            {/* Top-Left Floating Admin Actions */}
-            <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
-              <button
-                onClick={() => onOpenEditMenu(menu)}
-                className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-3 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
-                title="แก้ไขเมนูนี้ (ใส่รหัส 147258)"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>แก้ไข</span>
-              </button>
+        {filteredMenus.map((menu) => {
+          const dayInfo = getMenuDayInfo(menu.date);
 
-              <button
-                onClick={() => setMenuToDelete(menu)}
-                className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
-                title="ลบเมนูนี้ออกจากระบบ"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>ลบ</span>
-              </button>
-            </div>
+          return (
+            <div
+              key={menu.id}
+              className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col justify-between relative"
+            >
+              {/* Top Floating Admin Actions & Day Badge */}
+              <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
+                <div className="flex items-center gap-1.5 pointer-events-auto">
+                  <button
+                    onClick={() => onOpenEditMenu(menu)}
+                    className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
+                    title="แก้ไขเมนูนี้ (ใส่รหัส 147258)"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>แก้ไข</span>
+                  </button>
 
-            {/* Image & Badges */}
-            <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-              <img
-                src={menu.image_url}
-                alt={menu.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+                  <button
+                    onClick={() => setMenuToDelete(menu)}
+                    className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
+                    title="ลบเมนูนี้ออกจากระบบ"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
 
-              {/* Calories Pill */}
-              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-orange-400" />
-                <span>{menu.calories} kcal</span>
+                {/* Day Badge */}
+                <div className={`pointer-events-auto px-3 py-1 rounded-xl text-xs font-black shadow-md border backdrop-blur-md ${dayInfo.badge}`}>
+                  🗓️ {dayInfo.name}
+                </div>
               </div>
 
-              {/* Station Info Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-                <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
-                  <ChefHat className="w-3.5 h-3.5 text-amber-300" />
-                  {(!menu.station || menu.station.includes('?') || menu.station.includes('w')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
-                </span>
-                <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
-                  ★ {menu.reviews_count > 0 ? Number(menu.rating_avg || 0).toFixed(1) : '-'} ({menu.reviews_count || 0})
-                </span>
+              {/* Image & Badges */}
+              <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                <img
+                  src={menu.image_url}
+                  alt={menu.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+                {/* Calories Pill */}
+                <div className="absolute bottom-12 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                  <span>{menu.calories} kcal</span>
+                </div>
+
+                {/* Station Info Overlay */}
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
+                  <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
+                    <ChefHat className="w-3.5 h-3.5 text-amber-300" />
+                    {(!menu.station || menu.station.includes('?') || menu.station.includes('w')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
+                  </span>
+                  <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
+                    ★ {menu.reviews_count > 0 ? Number(menu.rating_avg || 0).toFixed(1) : '-'} ({menu.reviews_count || 0})
+                  </span>
+                </div>
               </div>
-            </div>
 
             {/* Body Info */}
             <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
@@ -298,8 +366,9 @@ export default function DailyMenuSection({
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
+    </div>
 
       {filteredMenus.length === 0 && (
         <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">

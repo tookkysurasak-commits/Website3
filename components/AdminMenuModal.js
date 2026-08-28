@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Plus, Edit3, Trash2, Image, Sparkles, CheckCircle2, Flame, Utensils, AlertCircle, ChefHat, Calendar, Upload, RefreshCw } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { MENU_CATEGORIES, ALLERGEN_OPTIONS } from '@/lib/initial-data';
+import { MENU_CATEGORIES, ALLERGEN_OPTIONS, getMenuDayInfo } from '@/lib/initial-data';
 
 // Default preset images
 const DEFAULT_PRESET_IMAGES = [
@@ -357,16 +357,57 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
               />
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1 flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-orange-500" />
-                <span>วันที่เสิร์ฟ</span>
-              </label>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-orange-500" />
+                  <span>วันที่เสิร์ฟ</span>
+                </label>
+                <span className="text-[11px] font-bold text-orange-600">
+                  {getMenuDayInfo(date).name}
+                </span>
+              </div>
+
+              {/* Quick Day Selector (Mon - Sat) */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+                {[
+                  { name: 'จันทร์', dayNum: 1 },
+                  { name: 'อังคาร', dayNum: 2 },
+                  { name: 'พุธ', dayNum: 3 },
+                  { name: 'พฤหัสฯ', dayNum: 4 },
+                  { name: 'ศุกร์', dayNum: 5 },
+                  { name: 'เสาร์', dayNum: 6 },
+                ].map((d) => {
+                  const isCurrent = getMenuDayInfo(date).dayNum === d.dayNum;
+                  return (
+                    <button
+                      key={d.dayNum}
+                      type="button"
+                      onClick={() => {
+                        const current = new Date(date || new Date());
+                        const currentDay = current.getDay();
+                        const diff = d.dayNum - (currentDay === 0 ? 7 : currentDay);
+                        const targetDate = new Date(current);
+                        targetDate.setDate(current.getDate() + diff);
+                        setDate(targetDate.toISOString().split('T')[0]);
+                      }}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        isCurrent
+                          ? 'bg-orange-500 text-white shadow-sm'
+                          : 'bg-slate-100 hover:bg-orange-100 text-slate-600'
+                      }`}
+                    >
+                      {d.name}
+                    </button>
+                  );
+                })}
+              </div>
+
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium"
+                className="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 font-medium"
               />
             </div>
           </div>
