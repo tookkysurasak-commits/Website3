@@ -163,14 +163,15 @@ export default function DailyMenuSection({
               <button
                 key={day.id}
                 onClick={() => setSelectedDay(day.id)}
-                className={`px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/20 scale-105'
+                    ? `${day.activeBtn || 'bg-slate-900 text-white'} scale-105`
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/70'
                 }`}
               >
+                <span className={`w-2 h-2 rounded-full ${day.dotColor || 'bg-slate-400'}`}></span>
                 <span>{day.name}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200/80 text-slate-600'}`}>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${isSelected ? 'bg-black/15 text-current' : 'bg-slate-200/80 text-slate-600'}`}>
                   {count}
                 </span>
               </button>
@@ -237,7 +238,7 @@ export default function DailyMenuSection({
           return (
             <div
               key={menu.id}
-              className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col justify-between relative"
+              className={`group rounded-3xl overflow-hidden border ${dayInfo.borderColor} ${dayInfo.cardBg} transition-all duration-300 flex flex-col justify-between relative hover:shadow-xl hover:-translate-y-1`}
             >
               {/* Top Floating Admin Actions & Day Badge */}
               <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
@@ -261,8 +262,8 @@ export default function DailyMenuSection({
                 </div>
 
                 {/* Day Badge */}
-                <div className={`pointer-events-auto px-3 py-1 rounded-xl text-xs font-black shadow-md border backdrop-blur-md ${dayInfo.badge}`}>
-                  🗓️ {dayInfo.name}
+                <div className={`pointer-events-auto px-3.5 py-1.5 rounded-2xl text-xs font-black shadow-md border backdrop-blur-md flex items-center gap-1.5 ${dayInfo.badge}`}>
+                  <span>🗓️ {dayInfo.name}</span>
                 </div>
               </div>
 

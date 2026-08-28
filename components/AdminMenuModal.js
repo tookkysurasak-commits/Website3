@@ -371,12 +371,12 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
               {/* Quick Day Selector (Mon - Sat) */}
               <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
                 {[
-                  { name: 'จันทร์', dayNum: 1 },
-                  { name: 'อังคาร', dayNum: 2 },
-                  { name: 'พุธ', dayNum: 3 },
-                  { name: 'พฤหัสฯ', dayNum: 4 },
-                  { name: 'ศุกร์', dayNum: 5 },
-                  { name: 'เสาร์', dayNum: 6 },
+                  { name: 'จันทร์', dayNum: 1, activeClass: 'bg-amber-400 text-amber-950 shadow-sm' },
+                  { name: 'อังคาร', dayNum: 2, activeClass: 'bg-pink-500 text-white shadow-sm' },
+                  { name: 'พุธ', dayNum: 3, activeClass: 'bg-emerald-500 text-white shadow-sm' },
+                  { name: 'พฤหัสฯ', dayNum: 4, activeClass: 'bg-orange-500 text-white shadow-sm' },
+                  { name: 'ศุกร์', dayNum: 5, activeClass: 'bg-sky-500 text-white shadow-sm' },
+                  { name: 'เสาร์', dayNum: 6, activeClass: 'bg-purple-500 text-white shadow-sm' },
                 ].map((d) => {
                   const isCurrent = getMenuDayInfo(date).dayNum === d.dayNum;
                   return (
@@ -393,8 +393,8 @@ export default function AdminMenuModal({ isOpen, onClose, menuToEdit, onSaveMenu
                       }}
                       className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
                         isCurrent
-                          ? 'bg-orange-500 text-white shadow-sm'
-                          : 'bg-slate-100 hover:bg-orange-100 text-slate-600'
+                          ? `${d.activeClass} font-black scale-105`
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
                       }`}
                     >
                       {d.name}
