@@ -114,23 +114,23 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-8">
         
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-purple-900 via-purple-700 to-fuchsia-600 text-white p-6 relative">
+        <div className="bg-gradient-to-r from-stone-950 via-zinc-900 to-amber-950 text-white p-6 relative border-b border-amber-500/30">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
+            className="absolute top-5 right-5 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/30 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
               ⭐
             </div>
             <div>
-              <span className="text-xs uppercase font-semibold text-purple-200 tracking-wider">
-                แบบประเมินความพึงพอใจ
+              <span className="text-xs uppercase font-bold text-amber-300 tracking-wider">
+                แบบประเมินคุณภาพ & รสชาติอาหาร
               </span>
-              <h2 className="text-xl sm:text-2xl font-bold line-clamp-1">
+              <h2 className="text-xl sm:text-2xl font-black text-white line-clamp-1">
                 {menu.name}
               </h2>
             </div>
@@ -145,7 +145,7 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
                 <span>ให้คะแนนคุณภาพ 4 มิติ</span>
-                <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
+                <span className="text-xs font-black text-amber-900 bg-amber-100 px-3 py-0.5 rounded-full border border-amber-300 shadow-sm">
                   เฉลี่ย: {calculateOverallScore()} / 5.0 ⭐
                 </span>
               </h3>
@@ -326,9 +326,9 @@ export default function RatingModal({ menu, onClose, onSubmitReview }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white font-bold text-sm shadow-lg shadow-purple-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-sm shadow-xl shadow-amber-500/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 border border-amber-300/30"
             >
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4 stroke-[3]" />
               <span>{isSubmitting ? 'กำลังส่งข้อมูล...' : 'ยืนยันและส่งคะแนนประเมิน 🎉'}</span>
             </button>
           </div>

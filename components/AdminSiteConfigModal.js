@@ -213,19 +213,19 @@ export default function AdminSiteConfigModal({ isOpen, onClose, siteConfig, onSa
           </div>
 
           {/* Live Preview Box */}
-          <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100 space-y-2">
-            <span className="text-[11px] font-bold text-purple-800 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-fuchsia-600" />
+          <div className="p-4 rounded-2xl bg-stone-900 border border-amber-500/30 space-y-2">
+            <span className="text-[11px] font-bold text-amber-300 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               ตัวอย่างการแสดงผลบนแบนเนอร์ (Preview):
             </span>
-            <div className="bg-gradient-to-r from-purple-900 via-purple-700 to-fuchsia-600 text-white p-4 rounded-2xl space-y-1 shadow-sm">
-              <div className="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-semibold text-pink-100">
+            <div className="bg-gradient-to-br from-stone-950 via-zinc-900 to-amber-950 text-white p-4 rounded-2xl space-y-1 shadow-sm border border-amber-500/25">
+              <div className="inline-block px-2.5 py-0.5 rounded-full bg-amber-500/20 text-[10px] font-bold text-amber-300 border border-amber-400/30">
                 {formData.bannerBadge || 'เมนูมื้อเที่ยงพร้อมเสิร์ฟแล้ววันนี้'}
               </div>
-              <h4 className="text-base sm:text-lg font-black leading-snug">
+              <h4 className="text-base sm:text-lg font-black leading-snug text-white">
                 {formData.bannerTitle || 'อิ่มอร่อย สด สะอาด พร้อมฟังทุกเสียงของคุณ 🍽️'}
               </h4>
-              <p className="text-[11px] text-purple-100 leading-relaxed">
+              <p className="text-[11px] text-stone-300 leading-relaxed font-light">
                 {formData.bannerSubtitle || 'ร่วมประเมินรสชาติและคุณภาพอาหาร...'}
               </p>
             </div>
@@ -253,9 +253,9 @@ export default function AdminSiteConfigModal({ isOpen, onClose, siteConfig, onSa
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white text-xs font-bold shadow-md shadow-purple-600/20 flex items-center gap-2 transition-all transform active:scale-95 disabled:opacity-50"
+                className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 flex items-center gap-2 transition-all transform active:scale-95 disabled:opacity-50 border border-amber-300/30"
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4 stroke-[3]" />
                 <span>{isSaving ? 'กำลังบันทึก...' : 'บันทึกการเปลี่ยนแปลง'}</span>
               </button>
             </div>

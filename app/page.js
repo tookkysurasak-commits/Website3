@@ -360,14 +360,14 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-purple-100 py-8 text-center text-xs text-slate-500 mt-12">
+      <footer className="bg-stone-950 border-t border-amber-500/20 py-8 text-center text-xs text-stone-400 mt-12">
         <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <div className="flex items-center justify-center gap-2 font-bold text-slate-700">
-            <span>🍱 YumCanteen</span>
+          <div className="flex items-center justify-center gap-2 font-black text-white text-sm">
+            <span>🍽️ YumCanteen</span>
             <span>•</span>
-            <span className="text-purple-700">Employee Lunch Feedback & Rating System</span>
+            <span className="text-amber-400">Employee Fine Dining & Lunch Rating System</span>
           </div>
-          <p>
+          <p className="text-stone-400">
             เชื่อมต่อฐานข้อมูล <b>Cloudflare D1</b> (dodcfd1) | Next.js & Tailwind CSS
           </p>
         </div>

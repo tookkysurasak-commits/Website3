@@ -157,15 +157,15 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Metric 1: Overall Average */}
-        <div className="bg-gradient-to-br from-purple-900 via-purple-700 to-fuchsia-600 text-white p-6 rounded-3xl shadow-lg shadow-purple-900/20 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-stone-950 via-zinc-900 to-amber-950 text-white p-6 rounded-3xl shadow-xl shadow-black/30 border border-amber-500/30 relative overflow-hidden">
           <div className="relative z-10 space-y-1">
-            <span className="text-xs text-purple-200 font-semibold uppercase tracking-wider">คะแนนความพึงพอใจรวม</span>
+            <span className="text-xs text-amber-300 font-bold uppercase tracking-wider">คะแนนความพึงพอใจรวม</span>
             <div className="text-3xl sm:text-4xl font-black flex items-baseline gap-2">
-              <span>{avgOverall}</span>
-              <span className="text-sm font-normal text-purple-200">/ 5.0 ⭐</span>
+              <span className="text-amber-300">{avgOverall}</span>
+              <span className="text-sm font-normal text-stone-300">/ 5.0 ⭐</span>
             </div>
-            <div className="text-[11px] text-purple-100 pt-2 flex items-center gap-1 font-medium">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <div className="text-[11px] text-amber-200/90 pt-2 flex items-center gap-1 font-medium">
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
               <span>อยู่ในเกณฑ์ดีเยี่ยม (+4.8% จากสัปดาห์ก่อน)</span>
             </div>
           </div>
@@ -198,11 +198,11 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
         {/* Metric 4: Top Wishlist Votes */}
         <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-1">
           <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">เมนูโหวตยอดนิยม</span>
-          <div className="text-lg font-bold text-purple-700 line-clamp-1">
+          <div className="text-lg font-black text-amber-700 line-clamp-1">
             {votes[0]?.dish_name || 'ก๋วยเตี๋ยวเรือวากิว'}
           </div>
-          <div className="text-[11px] text-purple-600 pt-2 flex items-center gap-1 font-semibold">
-            <Award className="w-3.5 h-3.5 text-purple-500" />
+          <div className="text-[11px] text-amber-600 pt-2 flex items-center gap-1 font-semibold">
+            <Award className="w-3.5 h-3.5 text-amber-500" />
             <span>ได้รับ {votes[0]?.votes_count || 89} โหวต เตรียมจัดทำ</span>
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-5">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-              <ChefHat className="w-5 h-5 text-purple-600" />
+              <ChefHat className="w-5 h-5 text-amber-500" />
               <span>วิเคราะห์คะแนนแยกตาม 4 มิติคุณภาพ</span>
             </h3>
             <span className="text-xs text-slate-400">เต็ม 5.00 คะแนน</span>
@@ -228,10 +228,10 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
             <div>
               <div className="flex justify-between text-xs font-bold text-slate-700 mb-1.5">
                 <span className="flex items-center gap-1.5">👅 รสชาติและความกลมกล่อม</span>
-                <span className="text-purple-700 font-black">{avgTaste} / 5.0</span>
+                <span className="text-amber-700 font-black">{avgTaste} / 5.0</span>
               </div>
               <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-500 h-full rounded-full transition-all duration-700" style={{ width: `${(avgTaste / 5) * 100}%` }}></div>
+                <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 h-full rounded-full transition-all duration-700" style={{ width: `${(avgTaste / 5) * 100}%` }}></div>
               </div>
             </div>
 

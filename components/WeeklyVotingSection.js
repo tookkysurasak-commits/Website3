@@ -66,27 +66,27 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
     <div className="space-y-6">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-purple-900 via-purple-700 to-fuchsia-600 rounded-3xl text-white p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-purple-900/20">
-        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+      <div className="bg-gradient-to-br from-stone-950 via-zinc-900 to-amber-950 rounded-3xl text-white p-6 sm:p-8 relative overflow-hidden shadow-2xl shadow-black/40 border border-amber-500/30">
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider text-pink-100">
-              <Sparkles className="w-3.5 h-3.5 text-pink-200" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               โหวตเมนูสำหรับสัปดาห์หน้า
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-md">
               อยากทานอะไรในสัปดาห์หน้า? โหวตเลย! 🗳️
             </h2>
-            <p className="text-purple-100 text-xs sm:text-sm leading-relaxed">
-              เมนูที่ได้รับคะแนนโหวตสูงสุด 3 อันดับแรก จะถูกบรรจุลงในตารางอาหารกลางวันของสัปดาห์ถัดไปโดยทีมแม่ครัว
+            <p className="text-stone-300 text-xs sm:text-sm leading-relaxed font-light">
+              เมนูที่ได้รับคะแนนโหวตสูงสุด 3 อันดับแรก จะถูกบรรจุลงในตารางอาหารกลางวันของสัปดาห์ถัดไปโดยทีมเชฟ
             </p>
           </div>
 
           <button
             onClick={() => setIsProposeModalOpen(true)}
-            className="px-5 py-3.5 rounded-2xl bg-white text-purple-900 hover:bg-purple-50 font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
+            className="px-5 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap border border-amber-300/30"
           >
-            <Plus className="w-4 h-4 text-fuchsia-600 stroke-[3]" />
+            <Plus className="w-4 h-4 stroke-[3]" />
             <span>เสนอเมนูใหม่ที่คุณอยากกิน</span>
           </button>
         </div>
@@ -104,7 +104,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
               key={dish.id}
               className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 ${
                 index === 0
-                  ? 'border-purple-300 ring-2 ring-purple-400/20 shadow-md'
+                  ? 'border-amber-400 ring-2 ring-amber-400/30 shadow-md bg-gradient-to-b from-amber-50/40 to-white'
                   : 'border-slate-200/80 shadow-sm hover:shadow-md'
               }`}
             >
@@ -120,7 +120,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                     <h3 className="font-extrabold text-base sm:text-lg text-slate-800 flex items-center gap-2">
                       <span>{dish.dish_name}</span>
                       {dish.tags?.map((t, idx) => (
-                        <span key={idx} className="text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md font-semibold">
+                        <span key={idx} className="text-[10px] bg-stone-900 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold">
                           {t}
                         </span>
                       ))}
@@ -149,7 +149,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                     className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all transform active:scale-95 ${
                       hasVoted
                         ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                        : 'bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-600 hover:from-purple-800 hover:to-fuchsia-700 text-white shadow-md shadow-purple-600/20 hover:shadow-purple-600/30'
+                        : 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black shadow-md shadow-amber-500/20 hover:shadow-amber-500/30'
                     }`}
                   >
                     {hasVoted ? (
@@ -159,7 +159,7 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                       </>
                     ) : (
                       <>
-                        <Heart className="w-4 h-4 fill-white" />
+                        <Heart className="w-4 h-4 fill-stone-950" />
                         <span>โหวตเมนูนี้</span>
                       </>
                     )}
@@ -173,8 +173,8 @@ export default function WeeklyVotingSection({ votes, onVoteDish, onProposeDish, 
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
                     index === 0
-                      ? 'bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500'
-                      : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+                      ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400'
+                      : 'bg-gradient-to-r from-stone-600 to-amber-600'
                   }`}
                   style={{ width: `${Math.max(percent, 4)}%` }}
                 ></div>
