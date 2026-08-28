@@ -1,9 +1,9 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'YumCanteen - ระบบประเมินและรีวิวอาหารกลางวันพนักงาน | Cloudflare D1',
+  title: 'DOD Canteen - ระบบประเมินและรีวิวอาหารกลางวันพนักงาน | Cloudflare D1',
   description: 'ระบบประเมินคุณภาพอาหารกลางวันพนักงาน โหวตเมนูประจำสัปดาห์ และแดชบอร์ดสรุปสถิติความพึงพอใจสำหรับโรงอาหารและฝ่ายบุคคล (HR)',
-  keywords: 'ประเมินอาหารกลางวัน, ระบบรีวิวอาหารพนักงาน, สวัสดิการอาหาร, Cloudflare D1, Next.js, Canteen Feedback',
+  keywords: 'ประเมินอาหารกลางวัน, ระบบรีวิวอาหารพนักงาน, สวัสดิการอาหาร, Cloudflare D1, Next.js, Canteen Feedback, DOD Canteen',
 };
 
 export default function RootLayout({ children }) {

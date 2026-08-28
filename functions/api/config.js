@@ -1,5 +1,5 @@
 const DEFAULT_SITE_CONFIG = {
-  brandName: 'YumCanteen',
+  brandName: 'DOD Canteen',
   brandSubtitle: 'ระบบประเมินอาหารพนักงาน',
   tabMenu: 'เมนูวันนี้',
   tabReviews: 'รีวิว & ความคิดเห็น',

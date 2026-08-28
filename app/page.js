@@ -76,6 +76,14 @@ export default function Home() {
     } catch (e) {}
   }, []);
 
+  // Sync document title with site brand name
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const brand = siteConfig?.brandName || 'DOD Canteen';
+      document.title = `${brand} - ระบบประเมินและรีวิวอาหารกลางวันพนักงาน | Cloudflare D1`;
+    }
+  }, [siteConfig]);
+
   // Compute live scores for menus whenever reviews change
   useEffect(() => {
     setMenus(prevMenus => {
@@ -363,7 +371,7 @@ export default function Home() {
       <footer className="bg-stone-950 border-t border-amber-500/20 py-8 text-center text-xs text-stone-400 mt-12">
         <div className="max-w-7xl mx-auto px-4 space-y-2">
           <div className="flex items-center justify-center gap-2 font-black text-white text-sm">
-            <span>🍽️ YumCanteen</span>
+            <span>🍽️ {siteConfig?.brandName || 'DOD Canteen'}</span>
             <span>•</span>
             <span className="text-amber-400">Employee Fine Dining & Lunch Rating System</span>
           </div>

@@ -40,7 +40,7 @@ export default function Navbar({
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-black text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
-                  {siteConfig?.brandName || 'YumCanteen'}
+                  {siteConfig?.brandName || 'DOD Canteen'}
                 </span>
                 <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs font-semibold bg-stone-900 text-amber-300 rounded-full border border-amber-500/30 shadow-sm">
                   {siteConfig?.brandSubtitle || 'ระบบประเมินอาหารพนักงาน'}

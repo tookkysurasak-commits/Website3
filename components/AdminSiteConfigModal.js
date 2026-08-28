@@ -192,9 +192,9 @@ export default function AdminSiteConfigModal({ isOpen, onClose, siteConfig, onSa
                   type="text"
                   value={formData.brandName || ''}
                   onChange={(e) => handleChange('brandName', e.target.value)}
-                  placeholder="เช่น YumCanteen"
+                  placeholder="เช่น DOD Canteen"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none"
                 />
               </div>
 
