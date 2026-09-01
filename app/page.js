@@ -17,10 +17,11 @@ import { StorageKeys } from '@/lib/db';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('menu'); // 'menu', 'reviews', 'voting', 'dashboard'
-  const [menus, setMenus] = useState(INITIAL_MENUS);
+  const [menus, setMenus] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [votes, setVotes] = useState(INITIAL_VOTES);
+  const [votes, setVotes] = useState([]);
   const [siteConfig, setSiteConfig] = useState(DEFAULT_SITE_CONFIG);
+  const [isLoadingMenus, setIsLoadingMenus] = useState(true);
   
   const [selectedMenuForRating, setSelectedMenuForRating] = useState(null);
   const [isD1ModalOpen, setIsD1ModalOpen] = useState(false);
@@ -44,9 +45,24 @@ export default function Home() {
         fetch('/api/config').then(r => r.json()).catch(() => null),
       ]);
 
-      if (Array.isArray(resMenus?.data)) setMenus(resMenus.data);
-      if (Array.isArray(resReviews?.data)) setReviews(resReviews.data);
-      if (Array.isArray(resVotes?.data)) setVotes(resVotes.data);
+      if (Array.isArray(resMenus?.data)) {
+        setMenus(resMenus.data);
+        try {
+          localStorage.setItem(StorageKeys.MENUS, JSON.stringify(resMenus.data));
+        } catch (e) {}
+      }
+      if (Array.isArray(resReviews?.data)) {
+        setReviews(resReviews.data);
+        try {
+          localStorage.setItem(StorageKeys.REVIEWS, JSON.stringify(resReviews.data));
+        } catch (e) {}
+      }
+      if (Array.isArray(resVotes?.data)) {
+        setVotes(resVotes.data);
+        try {
+          localStorage.setItem(StorageKeys.VOTES, JSON.stringify(resVotes.data));
+        } catch (e) {}
+      }
       if (resConfig?.data) {
         setSiteConfig(resConfig.data);
         try {
@@ -55,13 +71,35 @@ export default function Home() {
       }
     } catch (err) {
       console.warn("Using local storage fallback", err);
+    } finally {
+      setIsLoadingMenus(false);
     }
   };
 
   useEffect(() => {
-    refreshAllData();
-
+    // 1. Immediately restore real cached data from localStorage to prevent F5 flicker
     try {
+      const savedMenus = localStorage.getItem(StorageKeys.MENUS);
+      if (savedMenus) {
+        const parsed = JSON.parse(savedMenus);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMenus(parsed);
+          setIsLoadingMenus(false);
+        }
+      }
+
+      const savedReviews = localStorage.getItem(StorageKeys.REVIEWS);
+      if (savedReviews) {
+        const parsed = JSON.parse(savedReviews);
+        if (Array.isArray(parsed)) setReviews(parsed);
+      }
+
+      const savedVotes = localStorage.getItem(StorageKeys.VOTES);
+      if (savedVotes) {
+        const parsed = JSON.parse(savedVotes);
+        if (Array.isArray(parsed)) setVotes(parsed);
+      }
+
       const savedHelpful = localStorage.getItem(StorageKeys.HELPFUL_REVIEWS);
       if (savedHelpful) setHelpfulIds(JSON.parse(savedHelpful));
 
@@ -74,6 +112,9 @@ export default function Home() {
       const savedAuth = sessionStorage.getItem('canteen_admin_auth');
       if (savedAuth === 'true') setIsAdminAuthenticated(true);
     } catch (e) {}
+
+    // 2. Fetch fresh data from D1 API in background
+    refreshAllData();
   }, []);
 
   // Sync document title with site brand name
@@ -247,15 +288,20 @@ export default function Home() {
 
   // Admin: Save or Update Menu
   const handleSaveMenu = async (menuData, isEditing) => {
+    let updated;
     if (isEditing) {
-      setMenus(prev => prev.map(m => m.id === menuData.id ? { ...m, ...menuData } : m));
+      updated = menus.map(m => m.id === menuData.id ? { ...m, ...menuData } : m);
+      setMenus(updated);
+      try { localStorage.setItem(StorageKeys.MENUS, JSON.stringify(updated)); } catch (e) {}
       await fetch('/api/menus', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(menuData)
       });
     } else {
-      setMenus(prev => [menuData, ...prev]);
+      updated = [menuData, ...menus];
+      setMenus(updated);
+      try { localStorage.setItem(StorageKeys.MENUS, JSON.stringify(updated)); } catch (e) {}
       await fetch('/api/menus', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -268,7 +314,9 @@ export default function Home() {
   // Admin: Delete Menu
   const handleDeleteMenu = async (menuId) => {
     executeWithAdminAuth(async () => {
-      setMenus(prev => prev.filter(m => m.id !== menuId));
+      const updated = menus.filter(m => m.id !== menuId);
+      setMenus(updated);
+      try { localStorage.setItem(StorageKeys.MENUS, JSON.stringify(updated)); } catch (e) {}
       await fetch(`/api/menus?id=${menuId}`, {
         method: 'DELETE'
       });
@@ -279,7 +327,9 @@ export default function Home() {
   // Admin: Delete Review
   const handleDeleteReview = async (reviewId) => {
     executeWithAdminAuth(async () => {
-      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      const updated = reviews.filter(r => r.id !== reviewId);
+      setReviews(updated);
+      try { localStorage.setItem(StorageKeys.REVIEWS, JSON.stringify(updated)); } catch (e) {}
       try {
         await fetch(`/api/reviews?id=${reviewId}`, {
           method: 'DELETE'
@@ -334,6 +384,7 @@ export default function Home() {
             <DailyMenuSection
               menus={menus}
               siteConfig={siteConfig}
+              isLoading={isLoadingMenus}
               onOpenRatingModal={(menu) => setSelectedMenuForRating(menu)}
               onViewMenuReviews={handleViewMenuReviews}
               onOpenAddMenu={handleOpenAddMenu}

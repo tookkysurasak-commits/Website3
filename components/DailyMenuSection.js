@@ -32,7 +32,8 @@ export default function DailyMenuSection({
   onOpenSiteConfigModal,
   isAdmin, 
   onToggleAdmin,
-  siteConfig
+  siteConfig,
+  isLoading = false
 }) {
   const [selectedDay, setSelectedDay] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -231,163 +232,198 @@ export default function DailyMenuSection({
 
       </div>
 
-      {/* Menu Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredMenus.map((menu) => {
-          const dayInfo = getMenuDayInfo(menu.date);
-
-          return (
+      {/* Menu Cards Grid / Loading Skeleton */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
-              key={menu.id}
-              className={`group rounded-3xl overflow-hidden border ${dayInfo.borderColor} ${dayInfo.cardBg} transition-all duration-300 flex flex-col justify-between relative hover:shadow-xl hover:-translate-y-1`}
+              key={i}
+              className="rounded-3xl overflow-hidden border border-stone-200/80 bg-white shadow-sm animate-pulse flex flex-col justify-between"
             >
-              {/* Top Floating Admin Actions & Day Badge */}
-              <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-                <div className="flex items-center gap-1.5 pointer-events-auto">
-                  <button
-                    onClick={() => onOpenEditMenu(menu)}
-                    className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
-                    title="แก้ไขเมนูนี้ (ใส่รหัส 147258)"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>แก้ไข</span>
-                  </button>
-
-                  <button
-                    onClick={() => setMenuToDelete(menu)}
-                    className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
-                    title="ลบเมนูนี้ออกจากระบบ"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {/* Day Badge */}
-                <div className={`pointer-events-auto px-3.5 py-1.5 rounded-2xl text-xs font-black shadow-md border backdrop-blur-md flex items-center gap-1.5 ${dayInfo.badge}`}>
-                  <span>🗓️ {dayInfo.name}</span>
-                </div>
+              <div className="h-48 bg-stone-200/70 relative">
+                <div className="absolute top-3 left-3 w-20 h-6 bg-stone-300/80 rounded-xl"></div>
+                <div className="absolute bottom-3 left-3 w-36 h-6 bg-stone-300/80 rounded-lg"></div>
+                <div className="absolute bottom-3 right-3 w-14 h-6 bg-stone-300/80 rounded-lg"></div>
               </div>
-
-              {/* Image & Badges */}
-              <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-                <img
-                  src={menu.image_url}
-                  alt={menu.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
-
-                {/* Calories Pill */}
-                <div className="absolute bottom-12 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
-                  <span>{menu.calories} kcal</span>
+              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="h-5 bg-stone-200 rounded-lg w-3/4"></div>
+                  <div className="h-3 bg-stone-100 rounded w-full"></div>
+                  <div className="h-3 bg-stone-100 rounded w-2/3"></div>
                 </div>
-
-                {/* Station Info Overlay */}
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-                  <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
-                    <ChefHat className="w-3.5 h-3.5 text-amber-300" />
-                    {(!menu.station || menu.station.includes('?') || menu.station.includes('w')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
-                  </span>
-                  <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
-                    ★ {menu.reviews_count > 0 ? Number(menu.rating_avg || 0).toFixed(1) : '-'} ({menu.reviews_count || 0})
-                  </span>
+                <div className="flex gap-1.5 pt-1">
+                  <div className="h-4 w-16 bg-stone-100 rounded-md"></div>
+                  <div className="h-4 w-16 bg-stone-100 rounded-md"></div>
                 </div>
-              </div>
-
-            {/* Body Info */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-bold text-lg text-slate-800 group-hover:text-amber-700 transition-colors leading-snug">
-                    {menu.name}
-                  </h3>
-                  {menu.is_special && (
-                    <span className="shrink-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-200">
-                      ⭐ แนะนำ
-                    </span>
-                  )}
+                <div className="pt-3 border-t border-stone-100 flex gap-2">
+                  <div className="h-10 bg-amber-200/60 rounded-xl flex-1"></div>
+                  <div className="h-10 w-10 bg-stone-100 rounded-xl"></div>
+                  <div className="h-10 w-10 bg-stone-100 rounded-xl"></div>
                 </div>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                  {menu.description || 'เมนูอาหารกลางวันแสนอร่อย ปรุงสดใหม่ทุกวัน'}
-                </p>
-              </div>
-
-              {/* Allergen Information */}
-              <div className="space-y-1.5 pt-1">
-                <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-                  <Info className="w-3 h-3 text-slate-400" />
-                  ข้อมูลสำหรับผู้แพ้อาหาร:
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {menu.allergens && (Array.isArray(menu.allergens) ? menu.allergens : (typeof menu.allergens === 'string' ? menu.allergens.split(',') : [])).map((allergenId) => {
-                    const badge = getAllergenBadge(allergenId);
-                    return (
-                      <span
-                        key={allergenId}
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${badge.color}`}
-                      >
-                        {badge.label}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
-                <button
-                  onClick={() => onOpenRatingModal(menu)}
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-black shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-1.5 transition-all transform active:scale-95 border border-amber-300/30"
-                >
-                  <Star className="w-3.5 h-3.5 fill-stone-950" />
-                  <span>ให้คะแนน / รีวิวเมนูนี้</span>
-                </button>
-                <button
-                  onClick={() => onViewMenuReviews(menu.id)}
-                  className="p-2.5 rounded-xl border border-stone-200 hover:border-amber-400 hover:bg-amber-50/50 text-stone-600 text-xs transition-colors"
-                  title="ดูรีวิวของเมนูนี้"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onOpenEditMenu(menu)}
-                  className="p-2.5 rounded-xl bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-800 text-xs transition-colors"
-                  title="แก้ไขเมนู"
-                >
-                  <Edit3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setMenuToDelete(menu)}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-600 text-xs transition-colors"
-                  title="ลบเมนูนี้"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
               </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
-
-      {filteredMenus.length === 0 && (
-        <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-3 shadow-sm">
-          <div className="w-16 h-16 mx-auto rounded-full bg-stone-900 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30">
-            🍽️
-          </div>
-          <h3 className="font-bold text-stone-800 text-lg">ไม่พบเมนูอาหารที่คุณค้นหา</h3>
-          <p className="text-sm text-stone-400">ลองค้นหาด้วยคำค้นอื่น หรือคลิกปุ่มเพิ่มเมนูอาหารใหม่ด้านล่าง</p>
-          <button
-            onClick={onOpenAddMenu}
-            className="mt-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 text-xs font-black hover:from-amber-400 hover:to-yellow-400 transition-all inline-flex items-center gap-1.5 shadow-md shadow-amber-500/20"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>เพิ่มเมนูอาหารใหม่</span>
-          </button>
+          ))}
         </div>
-      )}
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredMenus.map((menu) => {
+              const dayInfo = getMenuDayInfo(menu.date);
+
+              return (
+                <div
+                  key={menu.id}
+                  className={`group rounded-3xl overflow-hidden border ${dayInfo.borderColor} ${dayInfo.cardBg} transition-all duration-300 flex flex-col justify-between relative hover:shadow-xl hover:-translate-y-1`}
+                >
+                  {/* Top Floating Admin Actions & Day Badge */}
+                  <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
+                    <div className="flex items-center gap-1.5 pointer-events-auto">
+                      <button
+                        onClick={() => onOpenEditMenu(menu)}
+                        className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
+                        title="แก้ไขเมนูนี้ (ใส่รหัส 147258)"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>แก้ไข</span>
+                      </button>
+
+                      <button
+                        onClick={() => setMenuToDelete(menu)}
+                        className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
+                        title="ลบเมนูนี้ออกจากระบบ"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Day Badge */}
+                    <div className={`pointer-events-auto px-3.5 py-1.5 rounded-2xl text-xs font-black shadow-md border backdrop-blur-md flex items-center gap-1.5 ${dayInfo.badge}`}>
+                      <span>🗓️ {dayInfo.name}</span>
+                    </div>
+                  </div>
+
+                  {/* Image & Badges */}
+                  <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                    <img
+                      src={menu.image_url}
+                      alt={menu.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+                    {/* Calories Pill */}
+                    <div className="absolute bottom-12 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                      <Flame className="w-3.5 h-3.5 text-orange-400" />
+                      <span>{menu.calories} kcal</span>
+                    </div>
+
+                    {/* Station Info Overlay */}
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
+                      <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm">
+                        <ChefHat className="w-3.5 h-3.5 text-amber-300" />
+                        {(!menu.station || menu.station.includes('?') || menu.station.includes('w')) ? 'ซุ้มอาหารหลัก (เชฟประจำวัน)' : menu.station}
+                      </span>
+                      <span className="flex items-center gap-1 bg-amber-500 text-white font-bold px-2 py-0.5 rounded-lg shadow-sm">
+                        ★ {menu.reviews_count > 0 ? Number(menu.rating_avg || 0).toFixed(1) : '-'} ({menu.reviews_count || 0})
+                      </span>
+                    </div>
+                  </div>
+
+                {/* Body Info */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-bold text-lg text-slate-800 group-hover:text-amber-700 transition-colors leading-snug">
+                        {menu.name}
+                      </h3>
+                      {menu.is_special && (
+                        <span className="shrink-0 bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-200">
+                          ⭐ แนะนำ
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                      {menu.description || 'เมนูอาหารกลางวันแสนอร่อย ปรุงสดใหม่ทุกวัน'}
+                    </p>
+                  </div>
+
+                  {/* Allergen Information */}
+                  <div className="space-y-1.5 pt-1">
+                    <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+                      <Info className="w-3 h-3 text-slate-400" />
+                      ข้อมูลสำหรับผู้แพ้อาหาร:
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {menu.allergens && (Array.isArray(menu.allergens) ? menu.allergens : (typeof menu.allergens === 'string' ? menu.allergens.split(',') : [])).map((allergenId) => {
+                        const badge = getAllergenBadge(allergenId);
+                        return (
+                          <span
+                            key={allergenId}
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${badge.color}`}
+                          >
+                            {badge.label}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
+                    <button
+                      onClick={() => onOpenRatingModal(menu)}
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-black shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center justify-center gap-1.5 transition-all transform active:scale-95 border border-amber-300/30"
+                    >
+                      <Star className="w-3.5 h-3.5 fill-stone-950" />
+                      <span>ให้คะแนน / รีวิวเมนูนี้</span>
+                    </button>
+                    <button
+                      onClick={() => onViewMenuReviews(menu.id)}
+                      className="p-2.5 rounded-xl border border-stone-200 hover:border-amber-400 hover:bg-amber-50/50 text-stone-600 text-xs transition-colors"
+                      title="ดูรีวิวของเมนูนี้"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onOpenEditMenu(menu)}
+                      className="p-2.5 rounded-xl bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-800 text-xs transition-colors"
+                      title="แก้ไขเมนู"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setMenuToDelete(menu)}
+                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-600 text-xs transition-colors"
+                      title="ลบเมนูนี้"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {filteredMenus.length === 0 && (
+          <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-3 shadow-sm">
+            <div className="w-16 h-16 mx-auto rounded-full bg-stone-900 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30">
+              🍽️
+            </div>
+            <h3 className="font-bold text-stone-800 text-lg">ไม่พบเมนูอาหารที่คุณค้นหา</h3>
+            <p className="text-sm text-stone-400">ลองค้นหาด้วยคำค้นอื่น หรือคลิกปุ่มเพิ่มเมนูอาหารใหม่ด้านล่าง</p>
+            <button
+              onClick={onOpenAddMenu}
+              className="mt-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 text-xs font-black hover:from-amber-400 hover:to-yellow-400 transition-all inline-flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>เพิ่มเมนูอาหารใหม่</span>
+            </button>
+          </div>
+        )}
+      </>
+    )}
 
       {/* Delete Confirmation Modal */}
       {menuToDelete && (
