@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, ThumbsUp, MessageSquare, Filter, User, Building, Sparkles, CheckCircle2, Shield, Calendar } from 'lucide-react';
+import { Star, ThumbsUp, MessageSquare, Filter, User, Building, Sparkles, CheckCircle2, Shield, Calendar, Trash2 } from 'lucide-react';
 
-export default function ReviewsFeed({ reviews, menus, onToggleHelpful, helpfulIds, onOpenRatingModal }) {
+export default function ReviewsFeed({ reviews, menus, onToggleHelpful, helpfulIds, onOpenRatingModal, onDeleteReview, isAdmin }) {
   const [selectedMenuFilter, setSelectedMenuFilter] = useState('all');
   const [selectedRatingFilter, setSelectedRatingFilter] = useState('all');
 
@@ -158,17 +158,29 @@ export default function ReviewsFeed({ reviews, menus, onToggleHelpful, helpfulId
                   {rev.date || 'วันนี้'}
                 </span>
 
-                <button
-                  onClick={() => onToggleHelpful(rev.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                    isLiked
-                      ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 shadow-sm border border-amber-300/30'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                  }`}
-                >
-                  <ThumbsUp className={`w-3.5 h-3.5 ${isLiked ? 'fill-stone-950' : ''}`} />
-                  <span>เป็นประโยชน์ ({rev.helpful_count + (isLiked ? 1 : 0)})</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onToggleHelpful(rev.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      isLiked
+                        ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 text-stone-950 shadow-sm border border-amber-300/30'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    }`}
+                  >
+                    <ThumbsUp className={`w-3.5 h-3.5 ${isLiked ? 'fill-stone-950' : ''}`} />
+                    <span>เป็นประโยชน์ ({rev.helpful_count + (isLiked ? 1 : 0)})</span>
+                  </button>
+
+                  {onDeleteReview && (
+                    <button
+                      onClick={() => onDeleteReview(rev.id)}
+                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 transition-colors"
+                      title="ลบรีวิวนี้ (ใส่รหัสผ่าน Admin 147258)"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
 
             </div>

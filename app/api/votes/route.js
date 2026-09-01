@@ -33,14 +33,14 @@ async function executeD1Query(sql, params = []) {
 export async function GET(request) {
   try {
     const results = await executeD1Query("SELECT * FROM menu_votes ORDER BY votes_count DESC");
-    if (results && results.length > 0) {
+    if (Array.isArray(results)) {
       return NextResponse.json({ success: true, data: results, source: 'cloudflare-d1' });
     }
   } catch (err) {
     console.warn("D1 votes query fallback:", err.message);
   }
 
-  return NextResponse.json({ success: true, data: INITIAL_VOTES, source: 'local' });
+  return NextResponse.json({ success: true, data: [], source: 'local' });
 }
 
 export async function POST(request) {

@@ -18,7 +18,7 @@ import { StorageKeys } from '@/lib/db';
 export default function Home() {
   const [activeTab, setActiveTab] = useState('menu'); // 'menu', 'reviews', 'voting', 'dashboard'
   const [menus, setMenus] = useState(INITIAL_MENUS);
-  const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+  const [reviews, setReviews] = useState([]);
   const [votes, setVotes] = useState(INITIAL_VOTES);
   const [siteConfig, setSiteConfig] = useState(DEFAULT_SITE_CONFIG);
   
@@ -44,9 +44,9 @@ export default function Home() {
         fetch('/api/config').then(r => r.json()).catch(() => null),
       ]);
 
-      if (resMenus?.data && resMenus.data.length > 0) setMenus(resMenus.data);
-      if (resReviews?.data && resReviews.data.length > 0) setReviews(resReviews.data);
-      if (resVotes?.data && resVotes.data.length > 0) setVotes(resVotes.data);
+      if (Array.isArray(resMenus?.data)) setMenus(resMenus.data);
+      if (Array.isArray(resReviews?.data)) setReviews(resReviews.data);
+      if (Array.isArray(resVotes?.data)) setVotes(resVotes.data);
       if (resConfig?.data) {
         setSiteConfig(resConfig.data);
         try {
@@ -276,6 +276,21 @@ export default function Home() {
     });
   };
 
+  // Admin: Delete Review
+  const handleDeleteReview = async (reviewId) => {
+    executeWithAdminAuth(async () => {
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      try {
+        await fetch(`/api/reviews?id=${reviewId}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn("Could not delete review from D1:", e);
+      }
+      setTimeout(() => refreshAllData(), 500);
+    });
+  };
+
   // View specific menu reviews
   const handleViewMenuReviews = (menuId) => {
     setActiveTab('reviews');
@@ -343,6 +358,8 @@ export default function Home() {
               onToggleHelpful={handleToggleHelpful}
               helpfulIds={helpfulIds}
               onOpenRatingModal={(menu) => setSelectedMenuForRating(menu)}
+              onDeleteReview={handleDeleteReview}
+              isAdmin={isAdminAuthenticated}
             />
           )}
 

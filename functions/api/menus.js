@@ -7,7 +7,7 @@ const INITIAL_MENUS = [
     calories: 680,
     allergens: ['Gluten', 'Egg', 'Pork'],
     image_url: 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80',
-    date: '2026-08-27',
+    date: '2026-08-24',
     is_special: true,
     rating_avg: 4.8,
     reviews_count: 38,
@@ -21,7 +21,7 @@ const INITIAL_MENUS = [
     calories: 340,
     allergens: ['Seafood', 'Dairy'],
     image_url: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4853?auto=format&fit=crop&w=800&q=80',
-    date: '2026-08-27',
+    date: '2026-08-25',
     is_special: true,
     rating_avg: 4.6,
     reviews_count: 29,
@@ -35,7 +35,7 @@ const INITIAL_MENUS = [
     calories: 310,
     allergens: ['Gluten'],
     image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-    date: '2026-08-27',
+    date: '2026-08-26',
     is_special: false,
     rating_avg: 4.5,
     reviews_count: 22,
@@ -63,7 +63,7 @@ const INITIAL_MENUS = [
     calories: 420,
     allergens: ['None'],
     image_url: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80',
-    date: '2026-08-27',
+    date: '2026-08-28',
     is_special: true,
     rating_avg: 4.9,
     reviews_count: 45,
@@ -77,7 +77,7 @@ const INITIAL_MENUS = [
     calories: 120,
     allergens: ['None'],
     image_url: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=800&q=80',
-    date: '2026-08-27',
+    date: '2026-08-29',
     is_special: false,
     rating_avg: 4.7,
     reviews_count: 31,
@@ -134,7 +134,7 @@ async function executeD1Query(env, sql, params = []) {
 export async function onRequestGet(context) {
   try {
     const results = await executeD1Query(context.env, 'SELECT * FROM menus ORDER BY is_special DESC, created_at DESC');
-    if (results && results.length > 0) {
+    if (results) {
       const formatted = results.map(m => ({
         ...m,
         allergens: typeof m.allergens === 'string' ? (m.allergens ? m.allergens.split(',') : []) : (m.allergens || []),
@@ -161,10 +161,11 @@ export async function onRequestPost(context) {
     const allergensStr = Array.isArray(allergens) ? allergens.join(',') : (allergens || '');
     const menuId = id || ('m-' + Date.now());
     const serveDate = date || new Date().toISOString().split('T')[0];
+    const menuStation = getStationByCategory(category, station);
 
     await executeD1Query(
       context.env,
-      'INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special, station) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         menuId, 
         name, 
@@ -174,7 +175,8 @@ export async function onRequestPost(context) {
         allergensStr, 
         image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80', 
         serveDate, 
-        is_special ? 1 : 0
+        is_special ? 1 : 0,
+        menuStation
       ]
     );
 
@@ -187,27 +189,40 @@ export async function onRequestPost(context) {
 export async function onRequestPut(context) {
   try {
     const body = await context.request.json();
-    const { id, name, category, description, calories, allergens, image_url, date, is_special } = body;
+    const { id, name, category, description, calories, allergens, image_url, date, is_special, station } = body;
 
     if (!id) {
       return Response.json({ success: false, error: 'Menu ID is required' }, { status: 400 });
     }
 
     const allergensStr = Array.isArray(allergens) ? allergens.join(',') : (allergens || '');
+    const menuStation = getStationByCategory(category, station);
 
     await executeD1Query(
       context.env,
-      'UPDATE menus SET name = ?, category = ?, description = ?, calories = ?, allergens = ?, image_url = ?, date = ?, is_special = ? WHERE id = ?',
+      `INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special, station)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         category = excluded.category,
+         description = excluded.description,
+         calories = excluded.calories,
+         allergens = excluded.allergens,
+         image_url = excluded.image_url,
+         date = excluded.date,
+         is_special = excluded.is_special,
+         station = excluded.station`,
       [
+        id,
         name,
-        category,
-        description,
+        category || 'main',
+        description || '',
         Number(calories) || 0,
         allergensStr,
-        image_url,
-        date,
+        image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+        date || new Date().toISOString().split('T')[0],
         is_special ? 1 : 0,
-        id
+        menuStation
       ]
     );
 

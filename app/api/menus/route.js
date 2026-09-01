@@ -30,10 +30,24 @@ async function executeD1Query(sql, params = []) {
   return data.result?.[0]?.results || [];
 }
 
+function getStationByCategory(category, station) {
+  if (station && typeof station === 'string' && station.trim() && !station.includes('\uFFFD') && !station.includes('?') && !station.includes('w')) {
+    return station;
+  }
+  switch (category) {
+    case 'main': return 'ซุ้มตามสั่งจานด่วน (เชฟสมชาย)';
+    case 'soup_curry': return 'ซุ้มต้มแกงไทยแท้ (ป้าสมร)';
+    case 'healthy_veg': return 'ซุ้ม Healthy & Clean Corner';
+    case 'dessert': return 'ซุ้มขนมหวาน & เบเกอรี่';
+    case 'drink_fruit': return 'ซุ้มเครื่องดื่มและผลไม้สด';
+    default: return 'ซุ้มอาหารหลัก (เชฟประจำวัน)';
+  }
+}
+
 export async function GET(request) {
   try {
     const results = await executeD1Query("SELECT * FROM menus ORDER BY is_special DESC, created_at DESC");
-    if (results && results.length > 0) {
+    if (results) {
       const formatted = results.map(m => ({
         ...m,
         allergens: typeof m.allergens === 'string' ? (m.allergens ? m.allergens.split(',') : []) : (m.allergens || []),
@@ -41,7 +55,7 @@ export async function GET(request) {
         is_special: Boolean(m.is_special),
         rating_avg: Number(m.rating_avg || 0),
         reviews_count: Number(m.reviews_count || 0),
-        station: m.station || 'ซุ้มอาหารหลัก'
+        station: getStationByCategory(m.category, m.station)
       }));
       return NextResponse.json({ success: true, data: formatted, source: 'cloudflare-d1' });
     }
@@ -61,10 +75,11 @@ export async function POST(request) {
     const allergensStr = Array.isArray(allergens) ? allergens.join(',') : (allergens || '');
     const menuId = id || `m-${Date.now()}`;
     const serveDate = date || new Date().toISOString().split('T')[0];
+    const menuStation = getStationByCategory(category, station);
 
     await executeD1Query(
-      `INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special, station)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         menuId, 
         name, 
@@ -74,7 +89,8 @@ export async function POST(request) {
         allergensStr, 
         image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80', 
         serveDate, 
-        is_special ? 1 : 0
+        is_special ? 1 : 0,
+        menuStation
       ]
     );
 
@@ -84,32 +100,43 @@ export async function POST(request) {
   }
 }
 
-// Update Existing Menu in D1
+// Update Existing Menu in D1 (UPSERT so it works even for initial menus)
 export async function PUT(request) {
   try {
     const body = await request.json();
-    const { id, name, category, description, calories, allergens, image_url, date, is_special } = body;
+    const { id, name, category, description, calories, allergens, image_url, date, is_special, station } = body;
 
     if (!id) {
       return NextResponse.json({ success: false, error: 'Menu ID is required' }, { status: 400 });
     }
 
     const allergensStr = Array.isArray(allergens) ? allergens.join(',') : (allergens || '');
+    const menuStation = getStationByCategory(category, station);
 
     await executeD1Query(
-      `UPDATE menus 
-       SET name = ?, category = ?, description = ?, calories = ?, allergens = ?, image_url = ?, date = ?, is_special = ?
-       WHERE id = ?`,
+      `INSERT INTO menus (id, name, category, description, calories, allergens, image_url, date, is_special, station)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         category = excluded.category,
+         description = excluded.description,
+         calories = excluded.calories,
+         allergens = excluded.allergens,
+         image_url = excluded.image_url,
+         date = excluded.date,
+         is_special = excluded.is_special,
+         station = excluded.station`,
       [
+        id,
         name,
-        category,
-        description,
+        category || 'main',
+        description || '',
         Number(calories) || 0,
         allergensStr,
-        image_url,
-        date,
+        image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+        date || new Date().toISOString().split('T')[0],
         is_special ? 1 : 0,
-        id
+        menuStation
       ]
     );
 

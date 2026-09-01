@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_REVIEWS } from '@/lib/initial-data';
 
 // D1 REST API Client
 async function executeD1Query(sql, params = []) {
@@ -33,7 +32,7 @@ async function executeD1Query(sql, params = []) {
 export async function GET(request) {
   try {
     const results = await executeD1Query("SELECT * FROM reviews ORDER BY created_at DESC");
-    if (results && results.length > 0) {
+    if (Array.isArray(results)) {
       const formatted = results.map(r => ({
         ...r,
         tags: typeof r.tags === 'string' ? (r.tags.startsWith('[') ? JSON.parse(r.tags) : r.tags.split(',')) : (r.tags || []),
@@ -51,7 +50,7 @@ export async function GET(request) {
     console.warn("D1 reviews query fallback:", err.message);
   }
 
-  return NextResponse.json({ success: true, data: INITIAL_REVIEWS, source: 'local' });
+  return NextResponse.json({ success: true, data: [], source: 'local' });
 }
 
 export async function POST(request) {
@@ -64,7 +63,7 @@ export async function POST(request) {
 
     const tagsStr = Array.isArray(tags) ? JSON.stringify(tags) : tags;
 
-    const result = await executeD1Query(
+    await executeD1Query(
       `INSERT INTO reviews (
         id, menu_id, menu_name, taste_score, hygiene_score, portion_score, value_score, 
         overall_score, employee_name, department, is_anonymous, comment, tags, photo_url, date
@@ -89,6 +88,23 @@ export async function POST(request) {
     );
 
     return NextResponse.json({ success: true, message: 'Review saved to D1' });
+  } catch (err) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Review ID is required' }, { status: 400 });
+    }
+
+    await executeD1Query("DELETE FROM reviews WHERE id = ?", [id]);
+
+    return NextResponse.json({ success: true, message: 'Review deleted from Cloudflare D1' });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

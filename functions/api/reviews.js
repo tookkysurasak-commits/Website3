@@ -1,43 +1,4 @@
-﻿const INITIAL_REVIEWS = [
-  {
-    id: 'rev-01',
-    menu_id: 'm-01',
-    menu_name: 'ข้าวกะเพราหมูกรอบไข่ดาวลาวา',
-    taste_score: 5,
-    hygiene_score: 5,
-    portion_score: 5,
-    value_score: 5,
-    overall_score: 5.0,
-    employee_name: 'คุณณัฐพล (Dev Team)',
-    department: 'Engineering',
-    is_anonymous: false,
-    comment: 'หมูกรอบกรอบมากกกก ไม่อมน้ำมันเลย พริกกระเทียมผัดมาหอมกลิ่นกระทะสุดๆ ไข่ดาวไข่แดงเยิ้มกำลังดี วันนี้ฟินมากครับ!',
-    tags: ['😋 อร่อยกลมกล่อม', '♨️ ร้อนกำลังดี', '🍚 ให้เยอะจุใจ'],
-    photo_url: null,
-    helpful_count: 14,
-    date: '2026-08-27',
-    created_at: '2026-08-27T12:15:00.000Z'
-  },
-  {
-    id: 'rev-02',
-    menu_id: 'm-02',
-    menu_name: 'ต้มยำกุ้งน้ำข้นยอดมะพร้าวอ่อน',
-    taste_score: 4,
-    hygiene_score: 5,
-    portion_score: 4,
-    value_score: 5,
-    overall_score: 4.5,
-    employee_name: 'พนักงานไม่ประสงค์ออกนาม',
-    department: 'Marketing',
-    is_anonymous: true,
-    comment: 'กุ้งตัวใหญ่และสดมาก ไม่คาวเลย รสชาติเข้มข้น แต่อยากให้ลดเปรี้ยวลงนิดนึงจะกลมกล่อมเพอร์เฟกต์มากค่ะ',
-    tags: ['🌿 วัตถุดิบสดใหม่', '✨ สะอาดถูกสุขอนามัย', '🌶️ เผ็ดจัดจ้านสะใจ'],
-    photo_url: null,
-    helpful_count: 8,
-    date: '2026-08-27',
-    created_at: '2026-08-27T12:28:00.000Z'
-  }
-];
+const INITIAL_REVIEWS = [];
 
 async function executeD1Query(env, sql, params = []) {
   if (env.DB && typeof env.DB.prepare === 'function') {
@@ -74,7 +35,7 @@ async function executeD1Query(env, sql, params = []) {
 export async function onRequestGet(context) {
   try {
     const results = await executeD1Query(context.env, 'SELECT * FROM reviews ORDER BY created_at DESC');
-    if (results && results.length > 0) {
+    if (Array.isArray(results)) {
       const formatted = results.map(r => ({
         ...r,
         tags: typeof r.tags === 'string' ? (r.tags.startsWith('[') ? JSON.parse(r.tags) : r.tags.split(',')) : (r.tags || []),
@@ -92,7 +53,7 @@ export async function onRequestGet(context) {
     console.warn('D1 reviews query fallback:', err.message);
   }
 
-  return Response.json({ success: true, data: INITIAL_REVIEWS, source: 'local' });
+  return Response.json({ success: true, data: [], source: 'local' });
 }
 
 export async function onRequestPost(context) {
@@ -130,6 +91,23 @@ export async function onRequestPost(context) {
     );
 
     return Response.json({ success: true, message: 'Review saved to D1' });
+  } catch (err) {
+    return Response.json({ success: false, error: err.message }, { status: 500 });
+  }
+}
+
+export async function onRequestDelete(context) {
+  try {
+    const { searchParams } = new URL(context.request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return Response.json({ success: false, error: 'Review ID is required' }, { status: 400 });
+    }
+
+    await executeD1Query(context.env, 'DELETE FROM reviews WHERE id = ?', [id]);
+
+    return Response.json({ success: true, message: 'Review deleted from Cloudflare D1' });
   } catch (err) {
     return Response.json({ success: false, error: err.message }, { status: 500 });
   }

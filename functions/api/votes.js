@@ -1,4 +1,4 @@
-﻿const INITIAL_VOTES = [
+const INITIAL_VOTES = [
   {
     id: 'vote-01',
     dish_name: 'ข้าวขาหมูเยอรมันทอดกรอบ + น้ำจิ้มซีฟู้ด',
@@ -54,14 +54,14 @@ async function executeD1Query(env, sql, params = []) {
 export async function onRequestGet(context) {
   try {
     const results = await executeD1Query(context.env, 'SELECT * FROM menu_votes ORDER BY votes_count DESC');
-    if (results && results.length > 0) {
+    if (Array.isArray(results)) {
       return Response.json({ success: true, data: results, source: 'cloudflare-d1' });
     }
   } catch (err) {
     console.warn('D1 votes query fallback:', err.message);
   }
 
-  return Response.json({ success: true, data: INITIAL_VOTES, source: 'local' });
+  return Response.json({ success: true, data: [], source: 'local' });
 }
 
 export async function onRequestPost(context) {
