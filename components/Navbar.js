@@ -28,57 +28,57 @@ export default function Navbar({
   }).format(new Date());
 
   return (
-    <header className="sticky top-0 z-40 bg-stone-950/95 backdrop-blur-md border-b border-amber-500/25 shadow-xl text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className="sticky top-0 z-40 bg-stone-950/95 backdrop-blur-md border-b border-amber-500/25 shadow-xl text-white w-full max-w-full overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
           
           {/* Logo & Branding */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('menu')}>
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 flex items-center justify-center text-stone-950 shadow-lg shadow-amber-500/30 transform hover:scale-105 transition-transform font-bold border border-amber-300/40">
-              <span className="text-2xl">🍽️</span>
+          <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer shrink min-w-0" onClick={() => setActiveTab('menu')}>
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 flex items-center justify-center text-stone-950 shadow-lg shadow-amber-500/30 transform hover:scale-105 transition-transform font-bold border border-amber-300/40 shrink-0">
+              <span className="text-xl sm:text-2xl">🍽️</span>
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-black text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
+            <div className="min-w-0">
+              <div className="flex items-center space-x-1.5">
+                <span className="font-black text-base sm:text-2xl tracking-tight bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 bg-clip-text text-transparent truncate">
                   {siteConfig?.brandName || 'DOD Canteen'}
                 </span>
-                <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs font-semibold bg-stone-900 text-amber-300 rounded-full border border-amber-500/30 shadow-sm">
+                <span className="hidden sm:inline-block px-2 py-0.5 text-xs font-semibold bg-stone-900 text-amber-300 rounded-full border border-amber-500/30 shadow-sm">
                   {siteConfig?.brandSubtitle || 'ระบบประเมินอาหารพนักงาน'}
                 </span>
               </div>
-              <p className="text-xs text-stone-400 flex items-center gap-1 font-medium">
-                <CalendarDays className="w-3.5 h-3.5 text-amber-400" />
-                {currentDateFormatted}
+              <p className="text-[10px] sm:text-xs text-stone-400 flex items-center gap-1 font-medium truncate">
+                <CalendarDays className="w-3 h-3 text-amber-400 shrink-0" />
+                <span className="truncate">{currentDateFormatted}</span>
               </p>
             </div>
           </div>
 
-          {/* Actions: Add Menu Button, Admin Edit Header Button, Admin Lock Status & D1 Status Badge */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Actions: Admin Lock Status & Ready Status Badge */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
             
-            {/* Quick Add Menu Button */}
+            {/* Quick Add Menu Button (Tablet / Desktop only) */}
             <button
               onClick={onOpenAddMenu}
-              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition-all transform active:scale-95 border border-amber-300/30"
+              className="hidden sm:flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition-all transform active:scale-95 border border-amber-300/30"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
-              <span className="hidden sm:inline">+ เพิ่มเมนูอาหาร</span>
+              <span>+ เพิ่มเมนู</span>
             </button>
 
-            {/* Admin Header Customization Button (Visible to all or highlighted for admin) */}
+            {/* Admin Header Customization Button (Desktop only) */}
             <button
               onClick={onOpenSiteConfigModal}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-500/30 transition-all shadow-sm"
+              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-500/30 transition-all shadow-sm"
               title="แก้ไขชื่อหัวข้อใหญ่ & ข้อความแบนเนอร์นโยบาย"
             >
               <Settings className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">แก้ไขหัวข้อ & แบนเนอร์</span>
+              <span>แก้ไขหัวข้อ & แบนเนอร์</span>
             </button>
 
             {/* Admin Lock / Unlock Status Button */}
             <button
               onClick={onToggleAdmin}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all border ${
                 isAdmin
                   ? 'bg-stone-900 text-amber-300 border-amber-400/50 shadow-sm'
                   : 'bg-stone-900 hover:bg-stone-800 text-stone-400 border-stone-800'
@@ -102,11 +102,11 @@ export default function Navbar({
 
             {/* System Status: Ready with Green Dot */}
             <div 
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs font-medium select-none"
+              className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-[11px] sm:text-xs font-medium select-none"
               title="สถานะระบบ: Ready"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-emerald-400 font-bold text-xs">Ready</span>
+              <span className="text-emerald-400 font-bold">Ready</span>
             </div>
 
           </div>
@@ -114,7 +114,7 @@ export default function Navbar({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-3 pt-1 scrollbar-none">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2.5 pt-1 scrollbar-none w-full max-w-full">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

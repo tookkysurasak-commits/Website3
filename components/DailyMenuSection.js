@@ -97,12 +97,12 @@ export default function DailyMenuSection({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
       
       {/* Hero Banner with Quick Highlights */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-950 via-zinc-900 to-amber-950 text-white p-6 sm:p-8 shadow-2xl shadow-black/40 border border-amber-500/30">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-72 h-72 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-1/4 -mb-16 w-64 h-64 rounded-full bg-yellow-500/10 blur-3xl pointer-events-none"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-stone-950 via-zinc-900 to-amber-950 text-white p-5 sm:p-8 shadow-2xl shadow-black/40 border border-amber-500/30 w-full max-w-full">
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 rounded-full bg-yellow-500/10 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -153,13 +153,13 @@ export default function DailyMenuSection({
       </div>
 
       {/* Day of Week Selector Bar (จันทร์ - เสาร์) */}
-      <div className="bg-white p-4 rounded-3xl border border-stone-200/90 shadow-sm space-y-3">
+      <div className="bg-white p-3.5 sm:p-4 rounded-3xl border border-stone-200/90 shadow-sm space-y-3 w-full max-w-full overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-bold text-stone-800">
-            <div className="p-1.5 rounded-xl bg-stone-900 text-amber-400 border border-amber-500/30">
+            <div className="p-1.5 rounded-xl bg-stone-900 text-amber-400 border border-amber-500/30 shrink-0">
               <Calendar className="w-4 h-4" />
             </div>
-            <span>ตารางเมนูอาหารประจำสัปดาห์ (เรียงตามวันจันทร์ - เสาร์):</span>
+            <span className="truncate">ตารางเมนูอาหารประจำสัปดาห์ (เรียงตามวันจันทร์ - เสาร์):</span>
           </div>
 
           <span className="text-[11px] text-slate-400">
@@ -168,7 +168,7 @@ export default function DailyMenuSection({
         </div>
 
         {/* Day Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none w-full max-w-full">
           {DAYS_OF_WEEK.map((day) => {
             const isSelected = selectedDay === day.id;
             const count = day.id === 'all'
@@ -280,7 +280,7 @@ export default function DailyMenuSection({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-full">
             {filteredMenus.map((menu) => {
               const dayInfo = getMenuDayInfo(menu.date);
 

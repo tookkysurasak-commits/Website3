@@ -356,9 +356,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between w-full max-w-full overflow-x-hidden">
       
-      <div>
+      <div className="w-full max-w-full overflow-x-hidden">
         {/* Navigation Bar */}
         <Navbar
           activeTab={activeTab}
@@ -379,7 +379,7 @@ export default function Home() {
         />
 
         {/* Main Content Area */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-x-hidden">
           {activeTab === 'menu' && (
             <DailyMenuSection
               menus={menus}
