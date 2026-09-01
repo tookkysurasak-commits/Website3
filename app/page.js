@@ -443,9 +443,6 @@ export default function Home() {
             <span>•</span>
             <span className="text-amber-400">Employee Fine Dining & Lunch Rating System</span>
           </div>
-          <p className="text-stone-400">
-            เชื่อมต่อฐานข้อมูล <b>Cloudflare D1</b> (dodcfd1) | Next.js & Tailwind CSS
-          </p>
         </div>
       </footer>
 

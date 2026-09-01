@@ -100,16 +100,14 @@ export default function Navbar({
               )}
             </button>
 
-            {/* D1 Connection Badge */}
-            <button 
-              onClick={onOpenD1Modal}
-              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-amber-500/30 text-xs font-medium text-amber-300 transition-all hover:shadow-sm"
-              title="ดูการเชื่อมต่อ Cloudflare D1"
+            {/* System Status: Ready with Green Dot */}
+            <div 
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs font-medium select-none"
+              title="สถานะระบบ: Ready"
             >
-              <Database className="w-4 h-4 text-amber-400" />
-              <span>D1 Connected</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            </button>
+              <span className="text-emerald-400 font-bold text-xs">Ready</span>
+            </div>
 
           </div>
 
