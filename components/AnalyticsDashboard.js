@@ -136,14 +136,6 @@ export default function AnalyticsDashboard({ reviews, menus, votes, onOpenD1Moda
 
         <div className="flex items-center gap-3">
           <button
-            onClick={onOpenD1Modal}
-            className="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-2 transition-colors"
-          >
-            <Database className="w-4 h-4 text-orange-600" />
-            <span>ตั้งค่า Cloudflare D1</span>
-          </button>
-
-          <button
             onClick={exportToCSV}
             className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all transform active:scale-95"
           >
