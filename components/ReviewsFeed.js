@@ -171,11 +171,11 @@ export default function ReviewsFeed({ reviews, menus, onToggleHelpful, helpfulId
                     <span>เป็นประโยชน์ ({rev.helpful_count + (isLiked ? 1 : 0)})</span>
                   </button>
 
-                  {onDeleteReview && (
+                  {isAdmin && onDeleteReview && (
                     <button
                       onClick={() => onDeleteReview(rev.id)}
                       className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 transition-colors"
-                      title="ลบรีวิวนี้ (ใส่รหัสผ่าน Admin 147258)"
+                      title="ลบรีวิวนี้ (Admin)"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

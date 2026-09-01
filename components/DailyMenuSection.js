@@ -291,24 +291,28 @@ export default function DailyMenuSection({
                 >
                   {/* Top Floating Admin Actions & Day Badge */}
                   <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-                    <div className="flex items-center gap-1.5 pointer-events-auto">
-                      <button
-                        onClick={() => onOpenEditMenu(menu)}
-                        className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
-                        title="แก้ไขเมนูนี้ (ใส่รหัส 147258)"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span>แก้ไข</span>
-                      </button>
+                    {isAdmin ? (
+                      <div className="flex items-center gap-1.5 pointer-events-auto">
+                        <button
+                          onClick={() => onOpenEditMenu(menu)}
+                          className="bg-slate-900/85 hover:bg-slate-900 text-amber-300 hover:text-white px-2.5 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-slate-700 transition-all transform hover:scale-105"
+                          title="แก้ไขเมนูนี้"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>แก้ไข</span>
+                        </button>
 
-                      <button
-                        onClick={() => setMenuToDelete(menu)}
-                        className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
-                        title="ลบเมนูนี้ออกจากระบบ"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => setMenuToDelete(menu)}
+                          className="bg-rose-900/85 hover:bg-rose-900 text-rose-200 hover:text-white px-2 py-1.5 rounded-xl backdrop-blur-md text-xs font-bold shadow-lg flex items-center gap-1 border border-rose-700 transition-all transform hover:scale-105"
+                          title="ลบเมนูนี้ออกจากระบบ"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
 
                     {/* Day Badge */}
                     <div className={`pointer-events-auto px-3.5 py-1.5 rounded-2xl text-xs font-black shadow-md border backdrop-blur-md flex items-center gap-1.5 ${dayInfo.badge}`}>
@@ -409,20 +413,24 @@ export default function DailyMenuSection({
                     >
                       <MessageSquare className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => onOpenEditMenu(menu)}
-                      className="p-2.5 rounded-xl bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-800 text-xs transition-colors"
-                      title="แก้ไขเมนู"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setMenuToDelete(menu)}
-                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-600 text-xs transition-colors"
-                      title="ลบเมนูนี้"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {isAdmin && (
+                      <>
+                        <button
+                          onClick={() => onOpenEditMenu(menu)}
+                          className="p-2.5 rounded-xl bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-800 text-xs transition-colors"
+                          title="แก้ไขเมนู"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setMenuToDelete(menu)}
+                          className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-600 text-xs transition-colors"
+                          title="ลบเมนูนี้"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
