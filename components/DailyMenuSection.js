@@ -486,27 +486,27 @@ export default function DailyMenuSection({
         </div>
       )}
 
-      {/* Food Image Preview Modal (Compact & Responsive) */}
+      {/* Food Image Preview Modal (Enlarged on Desktop, Compact on Mobile) */}
       {previewMenu && (
         <div 
           onClick={() => setPreviewMenu(null)}
-          className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fadeIn"
+          className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-stone-900 border border-stone-700/80 rounded-3xl overflow-hidden shadow-2xl w-full max-w-sm sm:max-w-md transition-all transform scale-100 flex flex-col"
+            className="relative bg-stone-900 border border-stone-700/80 rounded-3xl overflow-hidden shadow-2xl w-full max-w-sm sm:max-w-xl md:max-w-2xl transition-all transform scale-100 flex flex-col"
           >
             {/* Close Button */}
             <button
               onClick={() => setPreviewMenu(null)}
-              className="absolute top-3 right-3 z-30 p-2 rounded-full bg-stone-950/75 hover:bg-stone-900 text-stone-300 hover:text-white backdrop-blur-md border border-stone-600/50 transition-all transform active:scale-90 shadow-md"
+              className="absolute top-3.5 right-3.5 z-30 p-2.5 rounded-full bg-stone-950/75 hover:bg-stone-900 text-stone-300 hover:text-white backdrop-blur-md border border-stone-600/50 transition-all transform active:scale-90 shadow-lg"
               title="ปิดหน้าต่าง (Esc)"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Image Container */}
-            <div className="relative w-full h-60 sm:h-72 overflow-hidden bg-stone-950">
+            <div className="relative w-full h-64 sm:h-80 md:h-[400px] overflow-hidden bg-stone-950">
               <img
                 src={previewMenu.image_url}
                 alt={previewMenu.name}
@@ -515,12 +515,12 @@ export default function DailyMenuSection({
               <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-black/30 pointer-events-none"></div>
 
               {/* Day badge & special pill on top left */}
-              <div className="absolute top-3 left-3 flex items-center gap-1.5 pointer-events-none">
-                <span className={`px-3 py-1 rounded-xl text-xs font-black shadow-md border backdrop-blur-md ${getMenuDayInfo(previewMenu.date).badge}`}>
+              <div className="absolute top-3.5 left-3.5 flex items-center gap-2 pointer-events-none">
+                <span className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black shadow-md border backdrop-blur-md ${getMenuDayInfo(previewMenu.date).badge}`}>
                   🗓️ {getMenuDayInfo(previewMenu.date).name}
                 </span>
                 {previewMenu.is_special && (
-                  <span className="bg-amber-400 text-stone-950 text-xs font-black px-2.5 py-1 rounded-xl shadow-md border border-amber-300">
+                  <span className="bg-amber-400 text-stone-950 text-xs sm:text-sm font-black px-3 py-1.5 rounded-xl shadow-md border border-amber-300">
                     ⭐ แนะนำ
                   </span>
                 )}
@@ -528,40 +528,40 @@ export default function DailyMenuSection({
             </div>
 
             {/* Caption & Info */}
-            <div className="p-4 sm:p-5 space-y-3 bg-stone-900 text-white">
-              <div className="flex items-start justify-between gap-3">
+            <div className="p-5 sm:p-6 space-y-4 bg-stone-900 text-white">
+              <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <h3 className="font-extrabold text-base sm:text-lg text-white leading-snug">
+                  <h3 className="font-extrabold text-base sm:text-xl md:text-2xl text-white leading-snug">
                     {previewMenu.name}
                   </h3>
-                  <p className="text-xs text-stone-300 flex items-center gap-1.5">
-                    <ChefHat className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <p className="text-xs sm:text-sm text-stone-300 flex items-center gap-1.5">
+                    <ChefHat className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>{previewMenu.station || 'ซุ้มอาหารหลัก (เชฟประจำวัน)'}</span>
                   </p>
                 </div>
-                <div className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-xl bg-stone-800 text-orange-400 text-xs font-bold border border-stone-700">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                <div className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-800 text-orange-400 text-xs sm:text-sm font-bold border border-stone-700">
+                  <Flame className="w-4 h-4 text-orange-400" />
                   <span>{previewMenu.calories} kcal</span>
                 </div>
               </div>
 
               {previewMenu.description && (
-                <p className="text-xs text-stone-300 leading-relaxed bg-stone-950/60 p-3 rounded-2xl border border-stone-800/80">
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed bg-stone-950/60 p-3.5 sm:p-4 rounded-2xl border border-stone-800/80">
                   "{previewMenu.description}"
                 </p>
               )}
 
               {/* Action Buttons */}
-              <div className="pt-2 flex items-center gap-2">
+              <div className="pt-2 flex items-center gap-3">
                 <button
                   onClick={() => {
                     const target = previewMenu;
                     setPreviewMenu(null);
                     onOpenRatingModal(target);
                   }}
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5 transition-all transform active:scale-95 border border-amber-300/30"
+                  className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 transition-all transform active:scale-95 border border-amber-300/30"
                 >
-                  <Star className="w-3.5 h-3.5 fill-stone-950" />
+                  <Star className="w-4 h-4 fill-stone-950" />
                   <span>ให้คะแนน / รีวิวเมนูนี้</span>
                 </button>
                 <button
@@ -570,10 +570,10 @@ export default function DailyMenuSection({
                     setPreviewMenu(null);
                     onViewMenuReviews(id);
                   }}
-                  className="p-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white border border-stone-700 transition-colors"
+                  className="p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white border border-stone-700 transition-colors"
                   title="ดูรีวิวของเมนูนี้"
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
